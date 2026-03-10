@@ -1,0 +1,390 @@
+[
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "hmac",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hmac",
+        "description": "hmac",
+        "detail": "hmac",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "BYBIT_API_KEY",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "BYBIT_API_SECRET",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "BYBIT_BASE_URL",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_directories",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_directories",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "Trade",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "init_db",
+        "importPath": "db",
+        "description": "db",
+        "isExtraImport": true,
+        "detail": "db",
+        "documentation": {}
+    },
+    {
+        "label": "insert_trade",
+        "importPath": "db",
+        "description": "db",
+        "isExtraImport": true,
+        "detail": "db",
+        "documentation": {}
+    },
+    {
+        "label": "get_all_trades",
+        "importPath": "db",
+        "description": "db",
+        "isExtraImport": true,
+        "detail": "db",
+        "documentation": {}
+    },
+    {
+        "label": "create_test_trade",
+        "importPath": "db",
+        "description": "db",
+        "isExtraImport": true,
+        "detail": "db",
+        "documentation": {}
+    },
+    {
+        "label": "get_wallet_balance",
+        "importPath": "api",
+        "description": "api",
+        "isExtraImport": true,
+        "detail": "api",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "get_server_time",
+        "kind": 2,
+        "importPath": "bybit_journal.src.api",
+        "description": "bybit_journal.src.api",
+        "peekOfCode": "def get_server_time() -> dict:\n    \"\"\"\n    Test simple API publique Bybit.\n    \"\"\"\n    url = f\"{BYBIT_BASE_URL}/v5/market/time\"\n    response = requests.get(url, timeout=10)\n    response.raise_for_status()\n    return response.json()\ndef get_wallet_balance() -> dict:\n    \"\"\"",
+        "detail": "bybit_journal.src.api",
+        "documentation": {}
+    },
+    {
+        "label": "get_wallet_balance",
+        "kind": 2,
+        "importPath": "bybit_journal.src.api",
+        "description": "bybit_journal.src.api",
+        "peekOfCode": "def get_wallet_balance() -> dict:\n    \"\"\"\n    Test simple API privée Bybit.\n    \"\"\"\n    endpoint = \"/v5/account/wallet-balance\"\n    url = BYBIT_BASE_URL + endpoint\n    timestamp = str(int(time.time() * 1000))\n    recv_window = \"5000\"\n    query_string = \"accountType=UNIFIED\"\n    payload_to_sign = f\"{timestamp}{BYBIT_API_KEY}{recv_window}{query_string}\"",
+        "detail": "bybit_journal.src.api",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_directories",
+        "kind": 2,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "def ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "BASE_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "BASE_DIR = Path(__file__).resolve().parent.parent\nDATA_DIR = BASE_DIR / \"data\"\nEXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "DATA_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "DATA_DIR = BASE_DIR / \"data\"\nEXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "EXPORTS_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "EXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "SCREENSHOTS_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "SCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "DB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "LOG_PATH",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "LOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "BYBIT_BASE_URL",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "BYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "BYBIT_API_KEY",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "BYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "BYBIT_API_SECRET",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "BYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "get_connection",
+        "kind": 2,
+        "importPath": "bybit_journal.src.db",
+        "description": "bybit_journal.src.db",
+        "peekOfCode": "def get_connection() -> sqlite3.Connection:\n    \"\"\"\n    Ouvre une connexion vers la base SQLite.\n    \"\"\"\n    ensure_directories()\n    return sqlite3.connect(DB_PATH)\ndef init_db() -> None:\n    \"\"\"\n    Crée la table trades si elle n'existe pas.\n    \"\"\"",
+        "detail": "bybit_journal.src.db",
+        "documentation": {}
+    },
+    {
+        "label": "init_db",
+        "kind": 2,
+        "importPath": "bybit_journal.src.db",
+        "description": "bybit_journal.src.db",
+        "peekOfCode": "def init_db() -> None:\n    \"\"\"\n    Crée la table trades si elle n'existe pas.\n    \"\"\"\n    conn = get_connection()\n    cursor = conn.cursor()\n    cursor.execute(\"\"\"\n        CREATE TABLE IF NOT EXISTS trades (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            bybit_trade_id TEXT UNIQUE,",
+        "detail": "bybit_journal.src.db",
+        "documentation": {}
+    },
+    {
+        "label": "insert_trade",
+        "kind": 2,
+        "importPath": "bybit_journal.src.db",
+        "description": "bybit_journal.src.db",
+        "peekOfCode": "def insert_trade(trade: Trade) -> None:\n    \"\"\"\n    Insère un Trade dans la base.\n    \"\"\"\n    conn = get_connection()\n    cursor = conn.cursor()\n    cursor.execute(\"\"\"\n        INSERT OR IGNORE INTO trades (\n            bybit_trade_id,\n            symbol,",
+        "detail": "bybit_journal.src.db",
+        "documentation": {}
+    },
+    {
+        "label": "get_all_trades",
+        "kind": 2,
+        "importPath": "bybit_journal.src.db",
+        "description": "bybit_journal.src.db",
+        "peekOfCode": "def get_all_trades() -> list[Trade]:\n    \"\"\"\n    Retourne tous les trades sous forme de liste d'objets Trade.\n    \"\"\"\n    conn = get_connection()\n    cursor = conn.cursor()\n    cursor.execute(\"\"\"\n        SELECT\n            id,\n            bybit_trade_id,",
+        "detail": "bybit_journal.src.db",
+        "documentation": {}
+    },
+    {
+        "label": "create_test_trade",
+        "kind": 2,
+        "importPath": "bybit_journal.src.db",
+        "description": "bybit_journal.src.db",
+        "peekOfCode": "def create_test_trade() -> Trade:\n    \"\"\"\n    Crée un faux trade de test.\n    \"\"\"\n    return Trade(\n        bybit_trade_id=\"TEST001\",\n        symbol=\"BTCUSDT\",\n        side=\"Buy\",\n        qty=0.01,\n        entry_price=65000.0,",
+        "detail": "bybit_journal.src.db",
+        "documentation": {}
+    },
+    {
+        "label": "display_trades",
+        "kind": 2,
+        "importPath": "bybit_journal.src.main",
+        "description": "bybit_journal.src.main",
+        "peekOfCode": "def display_trades(trades) -> None:\n    if not trades:\n        print(\"Aucun trade enregistré.\")\n        return\n    print(\"\\nTrades en base :\")\n    for trade in trades:\n        print(\n            f\"[{trade.id}] \"\n            f\"{trade.symbol} | \"\n            f\"{trade.side} | \"",
+        "detail": "bybit_journal.src.main",
+        "documentation": {}
+    },
+    {
+        "label": "display_wallet",
+        "kind": 2,
+        "importPath": "bybit_journal.src.main",
+        "description": "bybit_journal.src.main",
+        "peekOfCode": "def display_wallet(wallet: dict) -> None:\n    if wallet.get(\"retCode\") != 0:\n        print(\"Erreur Bybit :\", wallet.get(\"retMsg\"))\n        return\n    result = wallet.get(\"result\", {})\n    accounts = result.get(\"list\", [])\n    if not accounts:\n        print(\"Aucun compte retourné par l'API.\")\n        return\n    account = accounts[0]",
+        "detail": "bybit_journal.src.main",
+        "documentation": {}
+    },
+    {
+        "label": "test_api",
+        "kind": 2,
+        "importPath": "bybit_journal.src.main",
+        "description": "bybit_journal.src.main",
+        "peekOfCode": "def test_api() -> None:\n    print(\"\\nTest API privée Bybit\")\n    try:\n        wallet = get_wallet_balance()\n        display_wallet(wallet)\n    except Exception as e:\n        print(\"Erreur API :\", e)\ndef main() -> None:\n    print(\"=== Démarrage de Bybit Journal ===\")\n    try:",
+        "detail": "bybit_journal.src.main",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "bybit_journal.src.main",
+        "description": "bybit_journal.src.main",
+        "peekOfCode": "def main() -> None:\n    print(\"=== Démarrage de Bybit Journal ===\")\n    try:\n        ensure_directories()\n        print(\"Dossiers prêts.\")\n        init_db()\n        print(f\"Base SQLite prête : {DB_PATH}\")\n        test_trade = create_test_trade()\n        insert_trade(test_trade)\n        print(\"Trade de test inséré si absent.\")",
+        "detail": "bybit_journal.src.main",
+        "documentation": {}
+    },
+    {
+        "label": "Trade",
+        "kind": 6,
+        "importPath": "bybit_journal.src.models",
+        "description": "bybit_journal.src.models",
+        "peekOfCode": "class Trade:\n    id: Optional[int] = None\n    bybit_trade_id: str = \"\"\n    symbol: str = \"\"\n    side: str = \"\"\n    qty: float = 0.0\n    entry_price: float = 0.0\n    exit_price: float = 0.0\n    take_profit: float = 0.0\n    stop_loss: float = 0.0",
+        "detail": "bybit_journal.src.models",
+        "documentation": {}
+    }
+]
