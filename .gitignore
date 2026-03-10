@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.env/
+.env.*
+
+# Environment variables
+.env
+
+# Logs
+*.log
+logs/
+
+# SQLite databases
+*.db
+*.sqlite3
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python build
+build/
+dist/
+*.egg-info/
+
+# Tests cache
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# MyPy
+.mypy_cache/
+
+# Screenshots / exports (generated files)
+bybit_journal/screenshots/*
+bybit_journal/exports/*
+
+# Allow gitkeep to keep folders
+!bybit_journal/screenshots/.gitkeep
+!bybit_journal/exports/.gitkeep
