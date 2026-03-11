@@ -18,6 +18,9 @@ bybit_journal/.env.*
 # Local editor files
 .vscode/
 .idea/
+todo.md
+PLAN_FUTUR.md
+ETAPE_FUTUR.md
 
 # Logs
 *.log

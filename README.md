@@ -15,8 +15,11 @@ L'application repose sur :
 - chargement des cles API Bybit
 - initialisation de la base SQLite
 - synchronisation Bybit paginee par categorie
+- synchronisation automatique au lancement de l'application
 - prevention des doublons via `bybit_trade_id` unique
 - dashboard wallet et resume du compte
+- affichage du `Total equity`, des stablecoins et des autres actifs
+- changement de devise d'affichage du wallet (`USD`, `JPY`, `GBP`, `CHF`, `EUR`)
 - liste de trades avec filtres
 - statistiques de base
 - export Excel des trades filtres
@@ -110,10 +113,10 @@ python bybit_journal/desktop/main.py
 ## Ecrans principaux
 
 - `Dashboard` : etat API, wallet, resume du compte et trades recents
-- `Trades` : filtres, table SQLite et export Excel
+- `Trades` : filtres, table SQLite, export Excel et resume d'export
 - `Synchronisation` : import Bybit sur une plage de jours
 - `Statistiques` : PnL, win rate et indicateurs globaux
-- `Configuration` : gestion du `.env` et bouton de dev
+- `Configuration` : gestion du `.env` et bouton `DEV TEST ONLY`
 
 ## Export Excel
 
@@ -127,6 +130,14 @@ Le fichier contient :
 
 - une feuille `Trades`
 - une feuille `Stats`
+
+## Comportement au lancement
+
+Au demarrage :
+
+- le backend Python initialise les dossiers, le `.env` et SQLite
+- le frontend charge le dashboard, les trades et les statistiques
+- si l'API Bybit est configuree, une synchronisation automatique se lance apres 1 seconde
 
 ## Tests
 
