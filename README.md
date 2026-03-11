@@ -1,213 +1,149 @@
-# TradeJournal
+# Bybit Journal
 
-TradeJournal is a CLI application that imports trades from the Bybit API, stores them in a local SQLite database, and exports them to Excel for easy trading analysis.
+Bybit Journal est une application CLI en Python qui recupere des executions depuis l'API Bybit, les stocke dans une base SQLite locale, puis permet de les consulter depuis un menu interactif.
 
-The goal of this project is to provide a simple trading journal that automatically collects trades and allows users to review their performance.
+Le projet est actuellement centre sur trois fonctions deja presentes :
 
----
+- initialiser l'environnement local,
+- configurer les credentials API Bybit,
+- synchroniser et consulter les trades en base.
 
-# Features
+Les fonctionnalites non encore implementees ne sont pas documentees ici comme si elles existaient deja.
 
-- Import trades from the Bybit API
-- Store trades locally using SQLite
-- Prevent duplicate trades
-- Export trades to Excel (.xlsx)
-- Add personal notes to trades
-- Attach screenshots to trades
-- Simple CLI interface
-- Works on Linux, macOS, and Windows
+## Fonctionnalites actuelles
 
----
+- creation automatique des dossiers de travail
+- creation automatique du fichier `.env` si absent
+- chargement des variables d'environnement Bybit
+- initialisation de la base SQLite
+- synchronisation des executions Bybit par categorie (`linear`, `spot`, `inverse`, `option`)
+- prevention des doublons en base via `bybit_trade_id` unique
+- affichage des trades stockes
+- menu CLI simple pour piloter l'application
 
-# Project Structure
+## Structure actuelle
 
-```
-bybit-trade-journal/
-│
-├── main.py
-├── config.py
-├── api.py
-├── db.py
-├── export_excel.py
-├── utils.py
-│
-├── data/
-│   └── journal.db
-│
-├── exports/
-│   └── trades.xlsx
-│
-├── screenshots/
-│
-├── tests/
-│
-├── requirements.txt
-└── README.md
-```
-
----
-
-# Requirements
-
-- Python 3.10+
-- Bybit API key
-- Internet connection
-
-Python libraries:
-
-- requests
-- python-dotenv
-- openpyxl
-
----
-
-# Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/yourusername/bybit-trade-journal.git
-cd bybit-trade-journal
+```text
+crypto-trade-journal/
+|-- README.md
+|-- requirements.txt
+|-- todo.md
+`-- bybit_journal/
+    |-- data/
+    |   `-- journal.db
+    |-- src/
+    |   |-- api.py
+    |   |-- app.py
+    |   |-- cli.py
+    |   |-- config.py
+    |   |-- db.py
+    |   |-- export_exel.py
+    |   |-- main.py
+    |   |-- models.py
+    |   `-- sync.py
+    `-- tests/
+        |-- dev_cli.py
+        |-- dev_main.py
+        `-- dev_tools.py
 ```
 
-Create a virtual environment:
+Notes :
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
+- `export_exel.py` est present dans le depot mais n'est pas encore integre au flux principal.
+- Les scripts dans `bybit_journal/tests/` servent aujourd'hui surtout d'outils de developpement.
 
-Install dependencies:
+## Prerequis
+
+- Python 3.10 ou plus recent
+- une cle API Bybit avec acces en lecture
+- une connexion internet pour les appels API
+
+Dependances Python actuelles :
+
+- `requests`
+- `python-dotenv`
+
+## Installation
+
+Creer un environnement virtuel puis installer les dependances :
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
+## Configuration
 
-# Configuration
+Au premier lancement, le projet cree automatiquement un fichier `.env` a la racine du depot s'il n'existe pas.
 
-Create a `.env` file in the project root.
+Le menu permet ensuite de renseigner :
 
-Example:
-
-```
+```env
 BYBIT_API_KEY=your_api_key
 BYBIT_API_SECRET=your_api_secret
-BYBIT_BASE_URL=https://api.bybit.com
 ```
 
-Make sure your API key has permission to read trades.
+## Lancement
 
----
+Le point d'entree actuel est `bybit_journal/src/main.py`.
 
-# Usage
-
-Initialize the database:
+Depuis la racine du projet :
 
 ```bash
-python main.py init-db
+python bybit_journal/src/main.py
 ```
 
-Sync trades from Bybit:
+Le programme affiche un menu interactif avec ces options :
 
-```bash
-python main.py sync
-```
+1. voir les trades
+2. synchroniser les trades Bybit
+3. configurer l'API Bybit
+4. quitter
 
-List stored trades:
+## Base de donnees
 
-```bash
-python main.py list
-```
+La base SQLite est stockee ici :
 
-Export trades to Excel:
+`bybit_journal/data/journal.db`
 
-```bash
-python main.py export
-```
+La table principale est `trades` et contient notamment :
 
-Add a note to a trade:
+- `bybit_trade_id`
+- `symbol`
+- `side`
+- `qty`
+- `entry_price`
+- `exit_price`
+- `pnl`
+- `invested_amount`
+- `trade_time`
+- `note`
+- `screenshot_path`
 
-```bash
-python main.py add-note --id 1 --note "Late entry"
-```
+## Etat actuel du projet
 
-Attach a screenshot:
+Ce qui fonctionne deja :
 
-```bash
-python main.py add-screenshot --id 1 --path screenshots/trade1.png
-```
+- l'initialisation locale
+- la configuration `.env`
+- la lecture des credentials
+- l'appel a l'API Bybit
+- l'insertion SQLite
+- l'evitement des doublons via `INSERT OR IGNORE`
+- l'affichage des trades existants
 
----
+Ce qui n'est pas encore branche dans le flux principal :
 
-# Database
+- export Excel
+- ajout et edition de notes
+- gestion des screenshots
 
-Trades are stored locally in SQLite:
+## Limites actuelles
 
-```
-data/journal.db
-```
+- la synchronisation recupere une fenetre recente et ne gere pas encore la pagination complete de l'API
+- les scripts de dev ne constituent pas encore une vraie suite de tests automatisee complete
+- le projet utilise aujourd'hui des imports simples depuis `src/`, adaptes a l'execution actuelle par script
 
-Main table:
+## Avertissement
 
-```
-trades
-```
-
-Fields include:
-
-- trade id
-- symbol
-- side
-- quantity
-- entry price
-- exit price
-- take profit
-- stop loss
-- leverage
-- pnl
-- notes
-- screenshot path
-
----
-
-# Export
-
-Trades can be exported to Excel:
-
-```
-exports/trades.xlsx
-```
-
-This file can be opened in:
-
-- Microsoft Excel
-- LibreOffice
-- Google Sheets
-
----
-
-# Future Improvements
-
-Possible future features:
-
-- statistics dashboard
-- win rate calculation
-- risk/reward analysis
-- automatic chart screenshots
-- simple web interface
-- Docker deployment
-
----
-
-# License
-
-This project is open source and available under the MIT License.
-
----
-
-# Disclaimer
-
-This tool is for educational and personal trading journal purposes only.  
-It is not affiliated with Bybit.
+Ce projet est un journal de trading personnel a but educatif et organisationnel.
+Il n'est pas affilie a Bybit.

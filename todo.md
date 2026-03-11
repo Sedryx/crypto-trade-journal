@@ -8,4 +8,4 @@
 - [ ] Exporte les trades dans Excel (Export trades to Excel)
 - [ ] Permet d’ajouter une note et un chemin de screenshot (Allow adding a note and screenshot path)
 
-* je nuancer : tu stockes déjà un trade de test dans SQLite, donc la brique SQLite fonctionne.
+*  nuancer : je stockes déjà un trade de test dans SQLite, donc la brique SQLite fonctionne.

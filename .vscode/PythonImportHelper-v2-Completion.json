@@ -36,18 +36,11 @@
         "documentation": {}
     },
     {
-        "label": "BYBIT_API_KEY",
+        "label": "config",
+        "kind": 6,
+        "isExtraImport": true,
         "importPath": "config",
         "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "BYBIT_API_SECRET",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
         "detail": "config",
         "documentation": {}
     },
@@ -60,6 +53,62 @@
         "documentation": {}
     },
     {
+        "label": "get_api_credentials",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ENV_PATH",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_directories",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_env_file",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "has_api_credentials",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "load_environment",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "DB_PATH",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
         "label": "DB_PATH",
         "importPath": "config",
         "description": "config",
@@ -76,28 +125,11 @@
         "documentation": {}
     },
     {
-        "label": "ensure_directories",
-        "importPath": "config",
-        "description": "config",
-        "isExtraImport": true,
-        "detail": "config",
-        "documentation": {}
-    },
-    {
         "label": "DB_PATH",
         "importPath": "config",
         "description": "config",
         "isExtraImport": true,
         "detail": "config",
-        "documentation": {}
-    },
-    {
-        "label": "os",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
         "documentation": {}
     },
     {
@@ -109,28 +141,92 @@
         "documentation": {}
     },
     {
-        "label": "load_dotenv",
-        "importPath": "dotenv",
-        "description": "dotenv",
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
         "isExtraImport": true,
-        "detail": "dotenv",
+        "detail": "pathlib",
         "documentation": {}
     },
     {
-        "label": "sqlite3",
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "get_executions",
+        "importPath": "api",
+        "description": "api",
+        "isExtraImport": true,
+        "detail": "api",
+        "documentation": {}
+    },
+    {
+        "label": "get_wallet_balance",
+        "importPath": "api",
+        "description": "api",
+        "isExtraImport": true,
+        "detail": "api",
+        "documentation": {}
+    },
+    {
+        "label": "get_executions",
+        "importPath": "api",
+        "description": "api",
+        "isExtraImport": true,
+        "detail": "api",
+        "documentation": {}
+    },
+    {
+        "label": "get_executions",
+        "importPath": "api",
+        "description": "api",
+        "isExtraImport": true,
+        "detail": "api",
+        "documentation": {}
+    },
+    {
+        "label": "get_wallet_balance",
+        "importPath": "api",
+        "description": "api",
+        "isExtraImport": true,
+        "detail": "api",
+        "documentation": {}
+    },
+    {
+        "label": "db",
         "kind": 6,
         "isExtraImport": true,
-        "importPath": "sqlite3",
-        "description": "sqlite3",
-        "detail": "sqlite3",
+        "importPath": "db",
+        "description": "db",
+        "detail": "db",
         "documentation": {}
     },
     {
-        "label": "Trade",
-        "importPath": "models",
-        "description": "models",
+        "label": "create_test_trade",
+        "importPath": "db",
+        "description": "db",
         "isExtraImport": true,
-        "detail": "models",
+        "detail": "db",
+        "documentation": {}
+    },
+    {
+        "label": "get_all_trades",
+        "importPath": "db",
+        "description": "db",
+        "isExtraImport": true,
+        "detail": "db",
         "documentation": {}
     },
     {
@@ -150,7 +246,7 @@
         "documentation": {}
     },
     {
-        "label": "get_all_trades",
+        "label": "insert_trade",
         "importPath": "db",
         "description": "db",
         "isExtraImport": true,
@@ -166,11 +262,159 @@
         "documentation": {}
     },
     {
-        "label": "get_wallet_balance",
-        "importPath": "api",
-        "description": "api",
+        "label": "insert_trade",
+        "importPath": "db",
+        "description": "db",
         "isExtraImport": true,
-        "detail": "api",
+        "detail": "db",
+        "documentation": {}
+    },
+    {
+        "label": "sync",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sync",
+        "description": "sync",
+        "detail": "sync",
+        "documentation": {}
+    },
+    {
+        "label": "sync_executions_from_category",
+        "importPath": "sync",
+        "description": "sync",
+        "isExtraImport": true,
+        "detail": "sync",
+        "documentation": {}
+    },
+    {
+        "label": "sqlite3",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sqlite3",
+        "description": "sqlite3",
+        "detail": "sqlite3",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "app",
+        "description": "app",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "configure_api_env",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_application",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "list_trades",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "show_api_status",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "sync_bybit_trades",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "configure_api_env",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_application",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "list_trades",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "sync_bybit_trades",
+        "importPath": "app",
+        "description": "app",
+        "isExtraImport": true,
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "load_dotenv",
+        "importPath": "dotenv",
+        "description": "dotenv",
+        "isExtraImport": true,
+        "detail": "dotenv",
+        "documentation": {}
+    },
+    {
+        "label": "Trade",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "Trade",
+        "importPath": "models",
+        "description": "models",
+        "isExtraImport": true,
+        "detail": "models",
+        "documentation": {}
+    },
+    {
+        "label": "run_cli",
+        "importPath": "cli",
+        "description": "cli",
+        "isExtraImport": true,
+        "detail": "cli",
         "documentation": {}
     },
     {
@@ -190,12 +434,79 @@
         "documentation": {}
     },
     {
-        "label": "get_server_time",
-        "kind": 2,
-        "importPath": "bybit_journal.src.api",
-        "description": "bybit_journal.src.api",
-        "peekOfCode": "def get_server_time() -> dict:\n    \"\"\"\n    Test simple API publique Bybit.\n    \"\"\"\n    url = f\"{BYBIT_BASE_URL}/v5/market/time\"\n    response = requests.get(url, timeout=10)\n    response.raise_for_status()\n    return response.json()\ndef get_wallet_balance() -> dict:\n    \"\"\"",
-        "detail": "bybit_journal.src.api",
+        "label": "seed_test_trade",
+        "importPath": "dev_tools",
+        "description": "dev_tools",
+        "isExtraImport": true,
+        "detail": "dev_tools",
+        "documentation": {}
+    },
+    {
+        "label": "test_executions_api",
+        "importPath": "dev_tools",
+        "description": "dev_tools",
+        "isExtraImport": true,
+        "detail": "dev_tools",
+        "documentation": {}
+    },
+    {
+        "label": "test_private_api",
+        "importPath": "dev_tools",
+        "description": "dev_tools",
+        "isExtraImport": true,
+        "detail": "dev_tools",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "run_dev_cli",
+        "importPath": "dev_cli",
+        "description": "dev_cli",
+        "isExtraImport": true,
+        "detail": "dev_cli",
+        "documentation": {}
+    },
+    {
+        "label": "io",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "io",
+        "description": "io",
+        "detail": "io",
+        "documentation": {}
+    },
+    {
+        "label": "tempfile",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tempfile",
+        "description": "tempfile",
+        "detail": "tempfile",
+        "documentation": {}
+    },
+    {
+        "label": "unittest",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "unittest",
+        "description": "unittest",
+        "detail": "unittest",
+        "documentation": {}
+    },
+    {
+        "label": "patch",
+        "importPath": "unittest.mock",
+        "description": "unittest.mock",
+        "isExtraImport": true,
+        "detail": "unittest.mock",
         "documentation": {}
     },
     {
@@ -203,8 +514,125 @@
         "kind": 2,
         "importPath": "bybit_journal.src.api",
         "description": "bybit_journal.src.api",
-        "peekOfCode": "def get_wallet_balance() -> dict:\n    \"\"\"\n    Test simple API privée Bybit.\n    \"\"\"\n    endpoint = \"/v5/account/wallet-balance\"\n    url = BYBIT_BASE_URL + endpoint\n    timestamp = str(int(time.time() * 1000))\n    recv_window = \"5000\"\n    query_string = \"accountType=UNIFIED\"\n    payload_to_sign = f\"{timestamp}{BYBIT_API_KEY}{recv_window}{query_string}\"",
+        "peekOfCode": "def get_wallet_balance() -> dict:\n    endpoint = \"/v5/account/wallet-balance\"\n    url = BYBIT_BASE_URL + endpoint\n    timestamp = str(int(time.time() * 1000))\n    recv_window = \"5000\"\n    query_string = \"accountType=UNIFIED\"\n    signature = _build_signature(timestamp, recv_window, query_string)\n    headers = _build_headers(timestamp, recv_window, signature)\n    response = requests.get(\n        url,",
         "detail": "bybit_journal.src.api",
+        "documentation": {}
+    },
+    {
+        "label": "get_executions",
+        "kind": 2,
+        "importPath": "bybit_journal.src.api",
+        "description": "bybit_journal.src.api",
+        "peekOfCode": "def get_executions(\n    category: str = \"linear\",\n    limit: int = 50,\n    start_time: int | None = None,\n    end_time: int | None = None\n) -> dict:\n    endpoint = \"/v5/execution/list\"\n    url = BYBIT_BASE_URL + endpoint\n    timestamp = str(int(time.time() * 1000))\n    recv_window = \"5000\"",
+        "detail": "bybit_journal.src.api",
+        "documentation": {}
+    },
+    {
+        "label": "initialize_application",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def initialize_application() -> None:\n    ensure_directories()\n    ensure_env_file()\n    load_environment()\n    init_db()\ndef show_api_status() -> None:\n    if has_api_credentials():\n        print(\"Configuration API : OK\")\n    else:\n        print(\"Configuration API : incomplete (.env vide ou non renseigne)\")",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "show_api_status",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def show_api_status() -> None:\n    if has_api_credentials():\n        print(\"Configuration API : OK\")\n    else:\n        print(\"Configuration API : incomplete (.env vide ou non renseigne)\")\ndef display_trades(trades) -> None:\n    if not trades:\n        print(\"\\nAucun trade enregistre.\")\n        return\n    print(\"\\nTrades en base :\")",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "display_trades",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def display_trades(trades) -> None:\n    if not trades:\n        print(\"\\nAucun trade enregistre.\")\n        return\n    print(\"\\nTrades en base :\")\n    for trade in trades:\n        print(\n            f\"[{trade.id}] \"\n            f\"{trade.symbol} | \"\n            f\"{trade.side} | \"",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "display_wallet",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def display_wallet(wallet: dict) -> None:\n    if wallet.get(\"retCode\") != 0:\n        print(\"\\nErreur Bybit :\", wallet.get(\"retMsg\"))\n        return\n    accounts = wallet.get(\"result\", {}).get(\"list\", [])\n    if not accounts:\n        print(\"\\nAucun compte retourne par l'API.\")\n        return\n    account = accounts[0]\n    print(\"\\nResume portefeuille Bybit :\")",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "list_trades",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def list_trades() -> None:\n    display_trades(get_all_trades())\ndef seed_test_trade() -> None:\n    insert_trade(create_test_trade())\n    print(\"\\nTrade de test insere si absent.\")\ndef test_private_api() -> None:\n    print(\"\\n=== Test API privee Bybit ===\")\n    display_wallet(get_wallet_balance())\ndef test_executions_api() -> None:\n    print(\"\\n=== Test recuperation executions Bybit ===\")",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "seed_test_trade",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def seed_test_trade() -> None:\n    insert_trade(create_test_trade())\n    print(\"\\nTrade de test insere si absent.\")\ndef test_private_api() -> None:\n    print(\"\\n=== Test API privee Bybit ===\")\n    display_wallet(get_wallet_balance())\ndef test_executions_api() -> None:\n    print(\"\\n=== Test recuperation executions Bybit ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "test_private_api",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def test_private_api() -> None:\n    print(\"\\n=== Test API privee Bybit ===\")\n    display_wallet(get_wallet_balance())\ndef test_executions_api() -> None:\n    print(\"\\n=== Test recuperation executions Bybit ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000\n    start_ms = now_ms - seven_days_ms\n    for category in [\"linear\", \"spot\", \"inverse\", \"option\"]:\n        print(f\"\\n--- Test categorie : {category} ---\")",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "test_executions_api",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def test_executions_api() -> None:\n    print(\"\\n=== Test recuperation executions Bybit ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000\n    start_ms = now_ms - seven_days_ms\n    for category in [\"linear\", \"spot\", \"inverse\", \"option\"]:\n        print(f\"\\n--- Test categorie : {category} ---\")\n        data = get_executions(\n            category=category,\n            limit=20,",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "sync_bybit_trades",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def sync_bybit_trades() -> None:\n    print(\"\\n=== Synchronisation des trades Bybit ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000\n    start_ms = now_ms - seven_days_ms\n    total_synced = 0\n    for category in [\"linear\", \"spot\", \"inverse\", \"option\"]:\n        print(f\"\\nSynchronisation categorie : {category}\")\n        synced = sync_executions_from_category(\n            category=category,",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "configure_api_env",
+        "kind": 2,
+        "importPath": "bybit_journal.src.app",
+        "description": "bybit_journal.src.app",
+        "peekOfCode": "def configure_api_env() -> None:\n    ensure_env_file()\n    print(\"\\n=== Configuration API Bybit ===\")\n    print(f\"Fichier .env : {ENV_PATH}\")\n    api_key = input(\"Entre BYBIT_API_KEY : \").strip()\n    api_secret = input(\"Entre BYBIT_API_SECRET : \").strip()\n    content = (\n        f\"BYBIT_API_KEY={api_key}\\n\"\n        f\"BYBIT_API_SECRET={api_secret}\\n\"\n    )",
+        "detail": "bybit_journal.src.app",
+        "documentation": {}
+    },
+    {
+        "label": "show_menu",
+        "kind": 2,
+        "importPath": "bybit_journal.src.cli",
+        "description": "bybit_journal.src.cli",
+        "peekOfCode": "def show_menu() -> None:\n    print(\"\\n=== Bybit Journal ===\")\n    print(\"1. Voir les trades\")\n    print(\"2. Synchroniser les trades Bybit\")\n    print(\"3. Configurer l'API Bybit (.env)\")\n    print(\"4. Quitter\")\ndef run_cli() -> None:\n    print(\"=== Demarrage de Bybit Journal ===\")\n    try:\n        initialize_application()",
+        "detail": "bybit_journal.src.cli",
+        "documentation": {}
+    },
+    {
+        "label": "run_cli",
+        "kind": 2,
+        "importPath": "bybit_journal.src.cli",
+        "description": "bybit_journal.src.cli",
+        "peekOfCode": "def run_cli() -> None:\n    print(\"=== Demarrage de Bybit Journal ===\")\n    try:\n        initialize_application()\n        print(f\"Application prete. Base SQLite : {DB_PATH}\")\n        show_api_status()\n        while True:\n            show_menu()\n            choice = input(\"\\nChoisis une option : \").strip()\n            if choice == \"1\":",
+        "detail": "bybit_journal.src.cli",
         "documentation": {}
     },
     {
@@ -212,7 +640,43 @@
         "kind": 2,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "def ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "def ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)\ndef ensure_env_file() -> None:\n    if ENV_PATH.exists():\n        return\n    ENV_PATH.write_text(\n        \"BYBIT_API_KEY=\\nBYBIT_API_SECRET=\\n\",\n        encoding=\"utf-8\",",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "ensure_env_file",
+        "kind": 2,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "def ensure_env_file() -> None:\n    if ENV_PATH.exists():\n        return\n    ENV_PATH.write_text(\n        \"BYBIT_API_KEY=\\nBYBIT_API_SECRET=\\n\",\n        encoding=\"utf-8\",\n    )\ndef load_environment() -> None:\n    ensure_env_file()\n    load_dotenv(dotenv_path=ENV_PATH, override=True)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "load_environment",
+        "kind": 2,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "def load_environment() -> None:\n    ensure_env_file()\n    load_dotenv(dotenv_path=ENV_PATH, override=True)\ndef get_api_credentials() -> tuple[str | None, str | None]:\n    load_environment()\n    api_key = os.getenv(\"BYBIT_API_KEY\")\n    api_secret = os.getenv(\"BYBIT_API_SECRET\")\n    return api_key, api_secret\ndef has_api_credentials() -> bool:\n    api_key, api_secret = get_api_credentials()",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "get_api_credentials",
+        "kind": 2,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "def get_api_credentials() -> tuple[str | None, str | None]:\n    load_environment()\n    api_key = os.getenv(\"BYBIT_API_KEY\")\n    api_secret = os.getenv(\"BYBIT_API_SECRET\")\n    return api_key, api_secret\ndef has_api_credentials() -> bool:\n    api_key, api_secret = get_api_credentials()\n    return bool(api_key and api_secret)",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "has_api_credentials",
+        "kind": 2,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "def has_api_credentials() -> bool:\n    api_key, api_secret = get_api_credentials()\n    return bool(api_key and api_secret)",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -221,7 +685,7 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "BASE_DIR = Path(__file__).resolve().parent.parent\nDATA_DIR = BASE_DIR / \"data\"\nEXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:",
+        "peekOfCode": "BASE_DIR = Path(__file__).resolve().parent.parent\nDATA_DIR = BASE_DIR / \"data\"\nEXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -230,7 +694,7 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "DATA_DIR = BASE_DIR / \"data\"\nEXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "DATA_DIR = BASE_DIR / \"data\"\nEXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -239,7 +703,7 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "EXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "EXPORTS_DIR = BASE_DIR / \"exports\"\nSCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -248,7 +712,7 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "SCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "SCREENSHOTS_DIR = BASE_DIR / \"screenshots\"\nDB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -257,7 +721,7 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "DB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "DB_PATH = DATA_DIR / \"journal.db\"\nLOG_PATH = DATA_DIR / \"app.log\"\nENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)\ndef ensure_env_file() -> None:",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -266,7 +730,25 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "LOG_PATH = DATA_DIR / \"app.log\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "LOG_PATH = DATA_DIR / \"app.log\"\nENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)\ndef ensure_env_file() -> None:\n    if ENV_PATH.exists():",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "ENV_PATH",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "ENV_PATH = BASE_DIR / \".env\"\nENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)\ndef ensure_env_file() -> None:\n    if ENV_PATH.exists():\n        return",
+        "detail": "bybit_journal.src.config",
+        "documentation": {}
+    },
+    {
+        "label": "ENV_EXAMPLE_PATH",
+        "kind": 5,
+        "importPath": "bybit_journal.src.config",
+        "description": "bybit_journal.src.config",
+        "peekOfCode": "ENV_EXAMPLE_PATH = BASE_DIR / \".env.example\"\nBYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)\ndef ensure_env_file() -> None:\n    if ENV_PATH.exists():\n        return\n    ENV_PATH.write_text(",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -275,25 +757,7 @@
         "kind": 5,
         "importPath": "bybit_journal.src.config",
         "description": "bybit_journal.src.config",
-        "peekOfCode": "BYBIT_BASE_URL = \"https://api.bybit.com\"\nBYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
-        "detail": "bybit_journal.src.config",
-        "documentation": {}
-    },
-    {
-        "label": "BYBIT_API_KEY",
-        "kind": 5,
-        "importPath": "bybit_journal.src.config",
-        "description": "bybit_journal.src.config",
-        "peekOfCode": "BYBIT_API_KEY = os.getenv(\"BYBIT_API_KEY\")\nBYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
-        "detail": "bybit_journal.src.config",
-        "documentation": {}
-    },
-    {
-        "label": "BYBIT_API_SECRET",
-        "kind": 5,
-        "importPath": "bybit_journal.src.config",
-        "description": "bybit_journal.src.config",
-        "peekOfCode": "BYBIT_API_SECRET = os.getenv(\"BYBIT_API_SECRET\")\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)",
+        "peekOfCode": "BYBIT_BASE_URL = \"https://api.bybit.com\"\ndef ensure_directories() -> None:\n    DATA_DIR.mkdir(exist_ok=True)\n    EXPORTS_DIR.mkdir(exist_ok=True)\n    SCREENSHOTS_DIR.mkdir(exist_ok=True)\ndef ensure_env_file() -> None:\n    if ENV_PATH.exists():\n        return\n    ENV_PATH.write_text(\n        \"BYBIT_API_KEY=\\nBYBIT_API_SECRET=\\n\",",
         "detail": "bybit_journal.src.config",
         "documentation": {}
     },
@@ -343,38 +807,11 @@
         "documentation": {}
     },
     {
-        "label": "display_trades",
-        "kind": 2,
-        "importPath": "bybit_journal.src.main",
-        "description": "bybit_journal.src.main",
-        "peekOfCode": "def display_trades(trades) -> None:\n    if not trades:\n        print(\"Aucun trade enregistré.\")\n        return\n    print(\"\\nTrades en base :\")\n    for trade in trades:\n        print(\n            f\"[{trade.id}] \"\n            f\"{trade.symbol} | \"\n            f\"{trade.side} | \"",
-        "detail": "bybit_journal.src.main",
-        "documentation": {}
-    },
-    {
-        "label": "display_wallet",
-        "kind": 2,
-        "importPath": "bybit_journal.src.main",
-        "description": "bybit_journal.src.main",
-        "peekOfCode": "def display_wallet(wallet: dict) -> None:\n    if wallet.get(\"retCode\") != 0:\n        print(\"Erreur Bybit :\", wallet.get(\"retMsg\"))\n        return\n    result = wallet.get(\"result\", {})\n    accounts = result.get(\"list\", [])\n    if not accounts:\n        print(\"Aucun compte retourné par l'API.\")\n        return\n    account = accounts[0]",
-        "detail": "bybit_journal.src.main",
-        "documentation": {}
-    },
-    {
-        "label": "test_api",
-        "kind": 2,
-        "importPath": "bybit_journal.src.main",
-        "description": "bybit_journal.src.main",
-        "peekOfCode": "def test_api() -> None:\n    print(\"\\nTest API privée Bybit\")\n    try:\n        wallet = get_wallet_balance()\n        display_wallet(wallet)\n    except Exception as e:\n        print(\"Erreur API :\", e)\ndef main() -> None:\n    print(\"=== Démarrage de Bybit Journal ===\")\n    try:",
-        "detail": "bybit_journal.src.main",
-        "documentation": {}
-    },
-    {
         "label": "main",
         "kind": 2,
         "importPath": "bybit_journal.src.main",
         "description": "bybit_journal.src.main",
-        "peekOfCode": "def main() -> None:\n    print(\"=== Démarrage de Bybit Journal ===\")\n    try:\n        ensure_directories()\n        print(\"Dossiers prêts.\")\n        init_db()\n        print(f\"Base SQLite prête : {DB_PATH}\")\n        test_trade = create_test_trade()\n        insert_trade(test_trade)\n        print(\"Trade de test inséré si absent.\")",
+        "peekOfCode": "def main() -> None:\n    run_cli()\nif __name__ == \"__main__\":\n    main()",
         "detail": "bybit_journal.src.main",
         "documentation": {}
     },
@@ -385,6 +822,150 @@
         "description": "bybit_journal.src.models",
         "peekOfCode": "class Trade:\n    id: Optional[int] = None\n    bybit_trade_id: str = \"\"\n    symbol: str = \"\"\n    side: str = \"\"\n    qty: float = 0.0\n    entry_price: float = 0.0\n    exit_price: float = 0.0\n    take_profit: float = 0.0\n    stop_loss: float = 0.0",
         "detail": "bybit_journal.src.models",
+        "documentation": {}
+    },
+    {
+        "label": "execution_to_trade",
+        "kind": 2,
+        "importPath": "bybit_journal.src.sync",
+        "description": "bybit_journal.src.sync",
+        "peekOfCode": "def execution_to_trade(execution: dict) -> Trade:\n    \"\"\"\n    Convertit une exécution Bybit en objet Trade.\n    \"\"\"\n    exec_price = float(execution.get(\"execPrice\", 0) or 0)\n    exec_qty = float(execution.get(\"execQty\", 0) or 0)\n    exec_pnl = float(execution.get(\"execPnl\", 0) or 0)\n    return Trade(\n        bybit_trade_id=execution.get(\"execId\", \"\"),\n        symbol=execution.get(\"symbol\", \"\"),",
+        "detail": "bybit_journal.src.sync",
+        "documentation": {}
+    },
+    {
+        "label": "sync_executions_from_category",
+        "kind": 2,
+        "importPath": "bybit_journal.src.sync",
+        "description": "bybit_journal.src.sync",
+        "peekOfCode": "def sync_executions_from_category(category: str, start_time: int, end_time: int, limit: int = 50) -> int:\n    \"\"\"\n    Récupère les exécutions d'une catégorie et les insère dans SQLite.\n    Retourne le nombre de trades traités.\n    \"\"\"\n    data = get_executions(\n        category=category,\n        limit=limit,\n        start_time=start_time,\n        end_time=end_time",
+        "detail": "bybit_journal.src.sync",
+        "documentation": {}
+    },
+    {
+        "label": "show_dev_menu",
+        "kind": 2,
+        "importPath": "bybit_journal.tests.dev_cli",
+        "description": "bybit_journal.tests.dev_cli",
+        "peekOfCode": "def show_dev_menu() -> None:\n    print(\"\\n=== Bybit Journal DEV ===\")\n    print(\"1. Voir les trades\")\n    print(\"2. Ajouter un trade de test\")\n    print(\"3. Synchroniser les trades Bybit\")\n    print(\"4. Tester l'API privee\")\n    print(\"5. Tester les executions\")\n    print(\"6. Configurer l'API Bybit (.env)\")\n    print(\"7. Quitter\")\ndef run_dev_cli() -> None:",
+        "detail": "bybit_journal.tests.dev_cli",
+        "documentation": {}
+    },
+    {
+        "label": "run_dev_cli",
+        "kind": 2,
+        "importPath": "bybit_journal.tests.dev_cli",
+        "description": "bybit_journal.tests.dev_cli",
+        "peekOfCode": "def run_dev_cli() -> None:\n    print(\"=== Demarrage DEV ===\")\n    try:\n        initialize_application()\n        print(f\"Application prete. Base SQLite : {DB_PATH}\")\n        while True:\n            show_dev_menu()\n            choice = input(\"\\nChoisis une option : \").strip()\n            if choice == \"1\":\n                list_trades()",
+        "detail": "bybit_journal.tests.dev_cli",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "bybit_journal.tests.dev_main",
+        "description": "bybit_journal.tests.dev_main",
+        "peekOfCode": "def main() -> None:\n    run_dev_cli()\nif __name__ == \"__main__\":\n    main()",
+        "detail": "bybit_journal.tests.dev_main",
+        "documentation": {}
+    },
+    {
+        "label": "BASE_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.tests.dev_main",
+        "description": "bybit_journal.tests.dev_main",
+        "peekOfCode": "BASE_DIR = Path(__file__).resolve().parent.parent\nSRC_DIR = BASE_DIR / \"src\"\nsys.path.append(str(SRC_DIR))\nfrom dev_cli import run_dev_cli\ndef main() -> None:\n    run_dev_cli()\nif __name__ == \"__main__\":\n    main()",
+        "detail": "bybit_journal.tests.dev_main",
+        "documentation": {}
+    },
+    {
+        "label": "SRC_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.tests.dev_main",
+        "description": "bybit_journal.tests.dev_main",
+        "peekOfCode": "SRC_DIR = BASE_DIR / \"src\"\nsys.path.append(str(SRC_DIR))\nfrom dev_cli import run_dev_cli\ndef main() -> None:\n    run_dev_cli()\nif __name__ == \"__main__\":\n    main()",
+        "detail": "bybit_journal.tests.dev_main",
+        "documentation": {}
+    },
+    {
+        "label": "seed_test_trade",
+        "kind": 2,
+        "importPath": "bybit_journal.tests.dev_tools",
+        "description": "bybit_journal.tests.dev_tools",
+        "peekOfCode": "def seed_test_trade() -> None:\n    insert_trade(create_test_trade())\n    print(\"\\nTrade de test insere.\")\ndef test_private_api() -> None:\n    print(\"\\n=== Test API privee ===\")\n    print(get_wallet_balance())\ndef test_executions_api() -> None:\n    print(\"\\n=== Test executions ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000",
+        "detail": "bybit_journal.tests.dev_tools",
+        "documentation": {}
+    },
+    {
+        "label": "test_private_api",
+        "kind": 2,
+        "importPath": "bybit_journal.tests.dev_tools",
+        "description": "bybit_journal.tests.dev_tools",
+        "peekOfCode": "def test_private_api() -> None:\n    print(\"\\n=== Test API privee ===\")\n    print(get_wallet_balance())\ndef test_executions_api() -> None:\n    print(\"\\n=== Test executions ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000\n    start_ms = now_ms - seven_days_ms\n    for category in [\"linear\", \"spot\", \"inverse\", \"option\"]:\n        print(f\"\\n--- {category} ---\")",
+        "detail": "bybit_journal.tests.dev_tools",
+        "documentation": {}
+    },
+    {
+        "label": "test_executions_api",
+        "kind": 2,
+        "importPath": "bybit_journal.tests.dev_tools",
+        "description": "bybit_journal.tests.dev_tools",
+        "peekOfCode": "def test_executions_api() -> None:\n    print(\"\\n=== Test executions ===\")\n    now_ms = int(time.time() * 1000)\n    seven_days_ms = 7 * 24 * 60 * 60 * 1000\n    start_ms = now_ms - seven_days_ms\n    for category in [\"linear\", \"spot\", \"inverse\", \"option\"]:\n        print(f\"\\n--- {category} ---\")\n        print(\n            get_executions(\n                category=category,",
+        "detail": "bybit_journal.tests.dev_tools",
+        "documentation": {}
+    },
+    {
+        "label": "ConfigTests",
+        "kind": 6,
+        "importPath": "bybit_journal.tests.test_core",
+        "description": "bybit_journal.tests.test_core",
+        "peekOfCode": "class ConfigTests(unittest.TestCase):\n    def test_ensure_env_file_creates_expected_template(self) -> None:\n        TEMP_ROOT.mkdir(exist_ok=True)\n        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as temp_dir:\n            env_path = Path(temp_dir) / \".env\"\n            with patch.object(config, \"ENV_PATH\", env_path):\n                config.ensure_env_file()\n            self.assertTrue(env_path.exists())\n            self.assertEqual(\n                env_path.read_text(encoding=\"utf-8\"),",
+        "detail": "bybit_journal.tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "DatabaseTests",
+        "kind": 6,
+        "importPath": "bybit_journal.tests.test_core",
+        "description": "bybit_journal.tests.test_core",
+        "peekOfCode": "class DatabaseTests(unittest.TestCase):\n    def test_insert_trade_ignores_duplicate_bybit_trade_id(self) -> None:\n        TEMP_ROOT.mkdir(exist_ok=True)\n        with tempfile.TemporaryDirectory(dir=TEMP_ROOT) as temp_dir:\n            temp_db_path = Path(temp_dir) / \"journal.db\"\n            def create_parent_directory() -> None:\n                temp_db_path.parent.mkdir(exist_ok=True)\n            with patch.object(db, \"DB_PATH\", temp_db_path), patch.object(\n                db, \"ensure_directories\", create_parent_directory\n            ):",
+        "detail": "bybit_journal.tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "SyncTests",
+        "kind": 6,
+        "importPath": "bybit_journal.tests.test_core",
+        "description": "bybit_journal.tests.test_core",
+        "peekOfCode": "class SyncTests(unittest.TestCase):\n    def test_execution_to_trade_maps_expected_fields(self) -> None:\n        execution = {\n            \"execId\": \"abc123\",\n            \"symbol\": \"BTCUSDT\",\n            \"side\": \"Buy\",\n            \"execQty\": \"0.25\",\n            \"execPrice\": \"64000\",\n            \"execPnl\": \"12.5\",\n            \"execTime\": \"1710000000000\",",
+        "detail": "bybit_journal.tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "AppDisplayTests",
+        "kind": 6,
+        "importPath": "bybit_journal.tests.test_core",
+        "description": "bybit_journal.tests.test_core",
+        "peekOfCode": "class AppDisplayTests(unittest.TestCase):\n    def test_display_wallet_shows_only_non_zero_balances(self) -> None:\n        wallet = {\n            \"retCode\": 0,\n            \"result\": {\n                \"list\": [\n                    {\n                        \"accountType\": \"UNIFIED\",\n                        \"totalEquity\": \"100.5\",\n                        \"totalWalletBalance\": \"99.0\",",
+        "detail": "bybit_journal.tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "SRC_DIR",
+        "kind": 5,
+        "importPath": "bybit_journal.tests.test_core",
+        "description": "bybit_journal.tests.test_core",
+        "peekOfCode": "SRC_DIR = Path(__file__).resolve().parent.parent / \"src\"\nTEMP_ROOT = Path(__file__).resolve().parent.parent / \".tmp_tests\"\nif str(SRC_DIR) not in sys.path:\n    sys.path.insert(0, str(SRC_DIR))\nimport app\nimport config\nimport db\nimport sync\nclass ConfigTests(unittest.TestCase):\n    def test_ensure_env_file_creates_expected_template(self) -> None:",
+        "detail": "bybit_journal.tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "TEMP_ROOT",
+        "kind": 5,
+        "importPath": "bybit_journal.tests.test_core",
+        "description": "bybit_journal.tests.test_core",
+        "peekOfCode": "TEMP_ROOT = Path(__file__).resolve().parent.parent / \".tmp_tests\"\nif str(SRC_DIR) not in sys.path:\n    sys.path.insert(0, str(SRC_DIR))\nimport app\nimport config\nimport db\nimport sync\nclass ConfigTests(unittest.TestCase):\n    def test_ensure_env_file_creates_expected_template(self) -> None:\n        TEMP_ROOT.mkdir(exist_ok=True)",
+        "detail": "bybit_journal.tests.test_core",
         "documentation": {}
     }
 ]

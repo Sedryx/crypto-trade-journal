@@ -7,46 +7,46 @@ __pycache__/
 
 # Virtual environments
 venv/
-.env/
-.env.*
+.venv/
 
 # Environment variables
 .env
+.env.*
+bybit_journal/.env
+bybit_journal/.env.*
+
+# Local editor files
+.vscode/
+.idea/
 
 # Logs
 *.log
 logs/
 
-# SQLite databases
+# Local databases and generated app data
 *.db
 *.sqlite3
+bybit_journal/data/
+bybit_journal/.tmp_tests/
 
-# VS Code
-.vscode/
+# Local tests and dev-only files
+bybit_journal/tests/
 
-# OS files
-.DS_Store
-Thumbs.db
+# Generated outputs
+bybit_journal/screenshots/
+bybit_journal/exports/
 
-# Python build
+# Python build artifacts
 build/
 dist/
 *.egg-info/
 
-# Tests cache
+# Test and coverage caches
 .pytest_cache/
-
-# Coverage
 .coverage
 htmlcov/
-
-# MyPy
 .mypy_cache/
 
-# Screenshots / exports (generated files)
-bybit_journal/screenshots/*
-bybit_journal/exports/*
-
-# Allow gitkeep to keep folders
-!bybit_journal/screenshots/.gitkeep
-!bybit_journal/exports/.gitkeep
+# OS files
+.DS_Store
+Thumbs.db
