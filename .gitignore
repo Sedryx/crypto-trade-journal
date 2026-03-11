@@ -29,9 +29,6 @@ logs/
 bybit_journal/data/
 bybit_journal/.tmp_tests/
 
-# Local tests and dev-only files
-bybit_journal/tests/
-
 # Generated outputs
 bybit_journal/screenshots/
 bybit_journal/exports/
@@ -40,6 +37,7 @@ bybit_journal/exports/
 build/
 dist/
 *.egg-info/
+*.spec
 
 # Test and coverage caches
 .pytest_cache/

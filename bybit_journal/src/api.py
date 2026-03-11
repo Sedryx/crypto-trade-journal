@@ -1,27 +1,31 @@
-import time
-import hmac
+"""Thin wrappers around the Bybit REST API."""
+
 import hashlib
+import hmac
+import time
+
 import requests
 
 from config import BYBIT_BASE_URL, get_api_credentials
 
 
 def _build_signature(timestamp: str, recv_window: str, query_string: str) -> str:
+    """Build the HMAC signature required by Bybit private endpoints."""
     api_key, api_secret = get_api_credentials()
 
     if not api_key or not api_secret:
         raise ValueError("BYBIT_API_KEY ou BYBIT_API_SECRET manquant dans le fichier .env")
 
     payload_to_sign = f"{timestamp}{api_key}{recv_window}{query_string}"
-
     return hmac.new(
         api_secret.encode("utf-8"),
         payload_to_sign.encode("utf-8"),
-        hashlib.sha256
+        hashlib.sha256,
     ).hexdigest()
 
 
 def _build_headers(timestamp: str, recv_window: str, signature: str) -> dict:
+    """Return authenticated headers for a private Bybit call."""
     api_key, _ = get_api_credentials()
 
     if not api_key:
@@ -35,23 +39,30 @@ def _build_headers(timestamp: str, recv_window: str, signature: str) -> dict:
     }
 
 
+def _build_query_string(params: dict) -> str:
+    """Serialize query params exactly as expected by the signature payload."""
+    parts = []
+    for key, value in params.items():
+        if value is None:
+            continue
+        parts.append(f"{key}={value}")
+    return "&".join(parts)
+
+
 def get_wallet_balance() -> dict:
+    """Fetch the unified account wallet payload."""
     endpoint = "/v5/account/wallet-balance"
     url = BYBIT_BASE_URL + endpoint
 
     timestamp = str(int(time.time() * 1000))
     recv_window = "5000"
-    query_string = "accountType=UNIFIED"
+    params = {"accountType": "UNIFIED"}
+    query_string = _build_query_string(params)
 
     signature = _build_signature(timestamp, recv_window, query_string)
     headers = _build_headers(timestamp, recv_window, signature)
 
-    response = requests.get(
-        url,
-        headers=headers,
-        params={"accountType": "UNIFIED"},
-        timeout=10
-    )
+    response = requests.get(url, headers=headers, params=params, timeout=10)
     response.raise_for_status()
     return response.json()
 
@@ -60,8 +71,10 @@ def get_executions(
     category: str = "linear",
     limit: int = 50,
     start_time: int | None = None,
-    end_time: int | None = None
+    end_time: int | None = None,
+    cursor: str | None = None,
 ) -> dict:
+    """Fetch one execution page for a given Bybit category."""
     endpoint = "/v5/execution/list"
     url = BYBIT_BASE_URL + endpoint
 
@@ -71,29 +84,15 @@ def get_executions(
     params = {
         "category": category,
         "limit": limit,
+        "startTime": start_time,
+        "endTime": end_time,
+        "cursor": cursor,
     }
-
-    query_parts = [
-        f"category={category}",
-        f"limit={limit}",
-    ]
-
-    if start_time is not None and end_time is not None:
-        params["startTime"] = start_time
-        params["endTime"] = end_time
-        query_parts.append(f"startTime={start_time}")
-        query_parts.append(f"endTime={end_time}")
-
-    query_string = "&".join(query_parts)
+    query_string = _build_query_string(params)
 
     signature = _build_signature(timestamp, recv_window, query_string)
     headers = _build_headers(timestamp, recv_window, signature)
 
-    response = requests.get(
-        url,
-        headers=headers,
-        params=params,
-        timeout=10
-    )
+    response = requests.get(url, headers=headers, params=params, timeout=10)
     response.raise_for_status()
     return response.json()

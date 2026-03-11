@@ -1,149 +1,153 @@
-# Bybit Journal
+# Bybit Trade Journal
 
-Bybit Journal est une application CLI en Python qui recupere des executions depuis l'API Bybit, les stocke dans une base SQLite locale, puis permet de les consulter depuis un menu interactif.
+Bybit Trade Journal est une application desktop locale pour synchroniser des executions Bybit, les stocker dans SQLite, analyser les statistiques du journal et exporter les trades en Excel.
 
-Le projet est actuellement centre sur trois fonctions deja presentes :
+L'application repose sur :
 
-- initialiser l'environnement local,
-- configurer les credentials API Bybit,
-- synchroniser et consulter les trades en base.
-
-Les fonctionnalites non encore implementees ne sont pas documentees ici comme si elles existaient deja.
+- un backend Python modulaire
+- une interface desktop PyWebView
+- un frontend local en HTML / CSS / JavaScript
 
 ## Fonctionnalites actuelles
 
 - creation automatique des dossiers de travail
-- creation automatique du fichier `.env` si absent
-- chargement des variables d'environnement Bybit
+- creation automatique du fichier `.env` a la racine du projet
+- chargement des cles API Bybit
 - initialisation de la base SQLite
-- synchronisation des executions Bybit par categorie (`linear`, `spot`, `inverse`, `option`)
-- prevention des doublons en base via `bybit_trade_id` unique
-- affichage des trades stockes
-- menu CLI simple pour piloter l'application
+- synchronisation Bybit paginee par categorie
+- prevention des doublons via `bybit_trade_id` unique
+- dashboard wallet et resume du compte
+- liste de trades avec filtres
+- statistiques de base
+- export Excel des trades filtres
+- bouton de dev pour injecter des trades de test
 
-## Structure actuelle
+## Structure
 
 ```text
 crypto-trade-journal/
 |-- README.md
 |-- requirements.txt
-|-- todo.md
+|-- ETAPE_FUTUR.md
 `-- bybit_journal/
+    |-- desktop/
+    |   |-- bridge.py
+    |   |-- main.py
+    |   `-- window.py
+    |-- frontend/
+    |   |-- app.js
+    |   |-- index.html
+    |   `-- styles.css
     |-- data/
     |   `-- journal.db
+    |-- exports/
     |-- src/
     |   |-- api.py
-    |   |-- app.py
-    |   |-- cli.py
     |   |-- config.py
     |   |-- db.py
-    |   |-- export_exel.py
-    |   |-- main.py
     |   |-- models.py
-    |   `-- sync.py
+    |   |-- sync.py
+    |   `-- services/
+    |       |-- __init__.py
+    |       `-- journal_service.py
     `-- tests/
-        |-- dev_cli.py
-        |-- dev_main.py
-        `-- dev_tools.py
+        `-- test_core.py
 ```
-
-Notes :
-
-- `export_exel.py` est present dans le depot mais n'est pas encore integre au flux principal.
-- Les scripts dans `bybit_journal/tests/` servent aujourd'hui surtout d'outils de developpement.
 
 ## Prerequis
 
-- Python 3.10 ou plus recent
-- une cle API Bybit avec acces en lecture
+- Python 3.13 recommande
+- une cle API Bybit avec acces lecture
 - une connexion internet pour les appels API
-
-Dependances Python actuelles :
-
-- `requests`
-- `python-dotenv`
 
 ## Installation
 
-Creer un environnement virtuel puis installer les dependances :
+Depuis la racine du projet :
 
-```bash
-pip install -r requirements.txt
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Si tu utilises le venv du projet :
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 ```
 
 ## Configuration
 
-Au premier lancement, le projet cree automatiquement un fichier `.env` a la racine du depot s'il n'existe pas.
+Au premier lancement, l'application cree automatiquement le fichier :
 
-Le menu permet ensuite de renseigner :
+```text
+/.env
+```
+
+avec :
 
 ```env
-BYBIT_API_KEY=your_api_key
-BYBIT_API_SECRET=your_api_secret
+BYBIT_API_KEY=
+BYBIT_API_SECRET=
 ```
+
+Tu peux ensuite remplir les cles depuis l'ecran `Configuration` de l'application.
 
 ## Lancement
 
-Le point d'entree actuel est `bybit_journal/src/main.py`.
+Le point d'entree de l'application est :
 
-Depuis la racine du projet :
-
-```bash
-python bybit_journal/src/main.py
+```text
+bybit_journal/desktop/main.py
 ```
 
-Le programme affiche un menu interactif avec ces options :
+Commande :
 
-1. voir les trades
-2. synchroniser les trades Bybit
-3. configurer l'API Bybit
-4. quitter
+```powershell
+python bybit_journal/desktop/main.py
+```
 
-## Base de donnees
+## Ecrans principaux
 
-La base SQLite est stockee ici :
+- `Dashboard` : etat API, wallet, resume du compte et trades recents
+- `Trades` : filtres, table SQLite et export Excel
+- `Synchronisation` : import Bybit sur une plage de jours
+- `Statistiques` : PnL, win rate et indicateurs globaux
+- `Configuration` : gestion du `.env` et bouton de dev
 
-`bybit_journal/data/journal.db`
+## Export Excel
 
-La table principale est `trades` et contient notamment :
+L'export Excel utilise les filtres de la vue `Trades` et cree un fichier `.xlsx` dans :
 
-- `bybit_trade_id`
-- `symbol`
-- `side`
-- `qty`
-- `entry_price`
-- `exit_price`
-- `pnl`
-- `invested_amount`
-- `trade_time`
-- `note`
-- `screenshot_path`
+```text
+bybit_journal/exports/
+```
 
-## Etat actuel du projet
+Le fichier contient :
 
-Ce qui fonctionne deja :
+- une feuille `Trades`
+- une feuille `Stats`
 
-- l'initialisation locale
-- la configuration `.env`
-- la lecture des credentials
-- l'appel a l'API Bybit
-- l'insertion SQLite
-- l'evitement des doublons via `INSERT OR IGNORE`
-- l'affichage des trades existants
+## Tests
 
-Ce qui n'est pas encore branche dans le flux principal :
+Lancer les tests :
 
-- export Excel
-- ajout et edition de notes
-- gestion des screenshots
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s bybit_journal/tests -p "test_*.py" -v
+```
+
+Verifier la compilation :
+
+```powershell
+.\.venv\Scripts\python.exe -m compileall bybit_journal/src bybit_journal/tests bybit_journal/desktop
+```
 
 ## Limites actuelles
 
-- la synchronisation recupere une fenetre recente et ne gere pas encore la pagination complete de l'API
-- les scripts de dev ne constituent pas encore une vraie suite de tests automatisee complete
-- le projet utilise aujourd'hui des imports simples depuis `src/`, adaptes a l'execution actuelle par script
+- l'application est orientee desktop local Windows
+- le packaging final `.exe` + installateur n'est pas encore termine
+- le bouton `DEV TEST ONLY` est present pour remplir rapidement la base en developpement
 
-## Avertissement
+## Note
 
-Ce projet est un journal de trading personnel a but educatif et organisationnel.
-Il n'est pas affilie a Bybit.
+Projet personnel a but organisationnel et educatif. Non affilie a Bybit.

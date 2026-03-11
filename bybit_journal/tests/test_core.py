@@ -1,0 +1,413 @@
+import shutil
+import sys
+import unittest
+import uuid
+from pathlib import Path
+from unittest.mock import patch
+
+
+# Test bootstrap:
+# add the backend and desktop folders to sys.path so the test runner can import
+# the local modules without packaging the project first.
+SRC_DIR = Path(__file__).resolve().parent.parent / "src"
+DESKTOP_DIR = Path(__file__).resolve().parent.parent / "desktop"
+TEMP_ROOT = Path(__file__).resolve().parent.parent / ".tmp_tests"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+if str(DESKTOP_DIR) not in sys.path:
+    sys.path.insert(0, str(DESKTOP_DIR))
+
+import config
+import db
+import sync
+import window
+from bridge import DesktopBridge
+from models import Trade
+from services import journal_service
+
+
+class TemporaryDbTestCase(unittest.TestCase):
+    """Base helper that gives each test a fresh isolated SQLite database."""
+
+    def setUp(self) -> None:
+        TEMP_ROOT.mkdir(exist_ok=True)
+        self.temp_dir = TEMP_ROOT / f"db-{uuid.uuid4().hex}"
+        self.temp_dir.mkdir()
+        self.temp_db_path = self.temp_dir / "journal.db"
+
+        # Patch the runtime DB path so each test writes into its own temp file.
+        self.db_path_patcher = patch.object(db, "DB_PATH", self.temp_db_path)
+        self.ensure_directories_patcher = patch.object(
+            db, "ensure_directories", lambda: self.temp_db_path.parent.mkdir(exist_ok=True)
+        )
+
+        self.db_path_patcher.start()
+        self.ensure_directories_patcher.start()
+        db.init_db()
+
+    def tearDown(self) -> None:
+        self.ensure_directories_patcher.stop()
+        self.db_path_patcher.stop()
+        shutil.rmtree(self.temp_dir, ignore_errors=True)
+
+    def insert_trade(self, **kwargs) -> None:
+        """Insert one synthetic trade with overridable fields."""
+        trade = Trade(
+            bybit_trade_id=kwargs.get("bybit_trade_id", str(uuid.uuid4())),
+            symbol=kwargs.get("symbol", "BTCUSDT"),
+            side=kwargs.get("side", "Buy"),
+            qty=kwargs.get("qty", 0.1),
+            entry_price=kwargs.get("entry_price", 100.0),
+            exit_price=kwargs.get("exit_price", 101.0),
+            take_profit=0.0,
+            stop_loss=0.0,
+            leverage=0.0,
+            pnl=kwargs.get("pnl", 1.0),
+            invested_amount=kwargs.get("invested_amount", 10.0),
+            trade_time=kwargs.get("trade_time", "2026-03-10 10:00:00"),
+            note=None,
+            screenshot_path=None,
+        )
+        db.insert_trade(trade)
+
+
+class ConfigTests(unittest.TestCase):
+    """Configuration tests for .env bootstrapping."""
+
+    def test_ensure_env_file_creates_expected_template(self) -> None:
+        TEMP_ROOT.mkdir(exist_ok=True)
+        temp_dir = TEMP_ROOT / f"config-{uuid.uuid4().hex}"
+        temp_dir.mkdir()
+        env_path = temp_dir / ".env"
+
+        try:
+            with patch.object(config, "ENV_PATH", env_path):
+                config.ensure_env_file()
+
+            self.assertTrue(env_path.exists())
+            self.assertEqual(
+                env_path.read_text(encoding="utf-8"),
+                "BYBIT_API_KEY=\nBYBIT_API_SECRET=\n",
+            )
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+class DatabaseTests(TemporaryDbTestCase):
+    """Low-level SQLite behavior: insert, filter and aggregate."""
+
+    def test_insert_trade_ignores_duplicate_bybit_trade_id(self) -> None:
+        trade = db.create_test_trade()
+
+        first_insert = db.insert_trade(trade)
+        second_insert = db.insert_trade(trade)
+        trades = db.get_all_trades()
+
+        self.assertTrue(first_insert)
+        self.assertFalse(second_insert)
+        self.assertEqual(len(trades), 1)
+        self.assertEqual(trades[0].bybit_trade_id, "TEST001")
+
+    def test_query_trades_applies_filters(self) -> None:
+        self.insert_trade(
+            bybit_trade_id="A",
+            symbol="BTCUSDT",
+            side="Buy",
+            pnl=10.0,
+            trade_time="2026-03-01 12:00:00",
+        )
+        self.insert_trade(
+            bybit_trade_id="B",
+            symbol="ETHUSDT",
+            side="Sell",
+            pnl=-3.0,
+            trade_time="2026-03-02 12:00:00",
+        )
+        self.insert_trade(
+            bybit_trade_id="C",
+            symbol="BTCUSDT",
+            side="Buy",
+            pnl=2.0,
+            trade_time="2026-03-03 12:00:00",
+        )
+
+        trades = db.query_trades(
+            symbol="BTCUSDT",
+            side="Buy",
+            start_time="2026-03-02 00:00:00",
+            min_pnl=1.0,
+        )
+
+        self.assertEqual(len(trades), 1)
+        self.assertEqual(trades[0].bybit_trade_id, "C")
+
+    def test_get_trade_stats_returns_base_metrics(self) -> None:
+        self.insert_trade(bybit_trade_id="A", pnl=10.0, invested_amount=100.0)
+        self.insert_trade(bybit_trade_id="B", pnl=-4.0, invested_amount=50.0)
+        self.insert_trade(bybit_trade_id="C", pnl=0.0, invested_amount=25.0)
+
+        stats = db.get_trade_stats()
+
+        self.assertEqual(stats["total_trades"], 3)
+        self.assertEqual(stats["winning_trades"], 1)
+        self.assertEqual(stats["losing_trades"], 1)
+        self.assertEqual(stats["breakeven_trades"], 1)
+        self.assertEqual(stats["total_pnl"], 6.0)
+        self.assertEqual(stats["best_trade"], 10.0)
+        self.assertEqual(stats["worst_trade"], -4.0)
+        self.assertEqual(stats["total_invested_amount"], 175.0)
+        self.assertAlmostEqual(stats["win_rate"], 33.3333, places=3)
+
+
+class ServiceTests(TemporaryDbTestCase):
+    """Service-layer tests used by the desktop bridge and frontend."""
+
+    def test_get_trades_data_returns_serialized_trades_and_filters(self) -> None:
+        self.insert_trade(
+            bybit_trade_id="A",
+            symbol="BTCUSDT",
+            side="Buy",
+            pnl=8.0,
+            trade_time="2026-03-05 12:00:00",
+        )
+
+        trades_data = journal_service.get_trades_data(symbol="BTCUSDT", side="Buy", limit=5)
+
+        self.assertEqual(trades_data["count"], 1)
+        self.assertEqual(trades_data["filters"]["symbol"], "BTCUSDT")
+        self.assertEqual(trades_data["trades"][0]["bybit_trade_id"], "A")
+        self.assertEqual(trades_data["trades"][0]["symbol"], "BTCUSDT")
+
+    def test_get_api_status_data_reports_missing_credentials(self) -> None:
+        # A missing API key/secret should be reported as an incomplete setup.
+        with patch.object(config, "has_api_credentials", return_value=False):
+            status = journal_service.get_api_status_data()
+
+        self.assertFalse(status["has_credentials"])
+        self.assertIn("incomplete", status["message"])
+
+    def test_sync_bybit_trades_data_returns_structured_summary(self) -> None:
+        # One mocked call per Bybit category: linear, spot, inverse, option.
+        with patch.object(
+            journal_service,
+            "sync_executions_from_category",
+            side_effect=[2, 0, 1, 3],
+        ):
+            sync_summary = journal_service.sync_bybit_trades_data(days=7)
+
+        self.assertEqual(sync_summary["days"], 7)
+        self.assertEqual(sync_summary["total_inserted"], 6)
+        self.assertEqual(sync_summary["range_count"], 1)
+        self.assertEqual(sync_summary["categories"][0]["category"], "linear")
+        self.assertEqual(sync_summary["categories"][3]["inserted_count"], 3)
+
+    def test_sync_bybit_trades_data_splits_ranges_above_seven_days(self) -> None:
+        # Bybit only accepts 7-day windows, so 21 days must be split into 3 ranges.
+        side_effects = [1, 2, 0, 1, 0, 0, 3, 1, 0, 2, 1, 0]
+        with patch.object(
+            journal_service,
+            "sync_executions_from_category",
+            side_effect=side_effects,
+        ) as mocked:
+            sync_summary = journal_service.sync_bybit_trades_data(days=21, now_ms=21 * 24 * 60 * 60 * 1000)
+
+        self.assertEqual(sync_summary["range_count"], 3)
+        self.assertEqual(mocked.call_count, 12)
+
+    def test_get_dashboard_data_returns_stats_and_recent_trades(self) -> None:
+        # The dashboard aggregates API status, stats, wallet and recent rows.
+        self.insert_trade(bybit_trade_id="A", symbol="BTCUSDT", pnl=3.0)
+
+        with patch.object(
+            journal_service,
+            "get_wallet_summary",
+            return_value={"success": True, "account": {"total_equity": "100"}, "non_zero_balances": []},
+        ):
+            dashboard = journal_service.get_dashboard_data()
+
+        self.assertIn("api_status", dashboard)
+        self.assertIn("stats", dashboard)
+        self.assertIn("wallet", dashboard)
+        self.assertIn("recent_trades", dashboard)
+        self.assertEqual(dashboard["stats"]["total_trades"], 1)
+        self.assertEqual(len(dashboard["recent_trades"]), 1)
+
+    def test_get_wallet_summary_extracts_non_zero_balances(self) -> None:
+        # Wallet normalization should keep only positive balances and split stables out.
+        wallet = {
+            "retCode": 0,
+            "result": {
+                "list": [
+                    {
+                        "accountType": "UNIFIED",
+                        "totalEquity": "100.5",
+                        "totalWalletBalance": "99.0",
+                        "coin": [
+                            {
+                                "coin": "USDT",
+                                "equity": "20",
+                                "walletBalance": "20",
+                                "usdValue": "20",
+                            },
+                            {
+                                "coin": "BTC",
+                                "equity": "0.01",
+                                "walletBalance": "0.01",
+                                "usdValue": "80",
+                            },
+                            {
+                                "coin": "ETH",
+                                "equity": "0",
+                                "walletBalance": "0",
+                                "usdValue": "0",
+                            },
+                        ],
+                    }
+                ]
+            },
+        }
+
+        with patch.object(
+            journal_service,
+            "_get_usd_conversion_rates",
+            return_value={"USD": 1.0, "JPY": 150.0, "GBP": 0.79, "CHF": 0.88, "EUR": 0.92},
+        ):
+            summary = journal_service.get_wallet_summary(wallet)
+
+        self.assertTrue(summary["success"])
+        self.assertEqual(summary["account"]["account_type"], "UNIFIED")
+        self.assertEqual(summary["account"]["total_equity"], "100.5")
+        self.assertEqual(len(summary["non_zero_balances"]), 2)
+        self.assertEqual(summary["non_zero_balances"][0]["coin"], "BTC")
+        self.assertEqual(summary["non_zero_balances"][1]["coin"], "USDT")
+        self.assertEqual(len(summary["stable_balances"]), 1)
+        self.assertEqual(summary["stable_balances"][0]["coin"], "USDT")
+        self.assertEqual(summary["stable_total_usd"], 20.0)
+        self.assertEqual(summary["display_currency"], "USD")
+        self.assertIn("JPY", summary["conversion_rates"])
+
+    def test_configure_api_credentials_writes_env_file(self) -> None:
+        TEMP_ROOT.mkdir(exist_ok=True)
+        temp_dir = TEMP_ROOT / f"env-write-{uuid.uuid4().hex}"
+        temp_dir.mkdir()
+        env_path = temp_dir / ".env"
+
+        try:
+            with patch.object(config, "ENV_PATH", env_path):
+                result = journal_service.configure_api_credentials("key", "secret")
+
+            self.assertTrue(result["saved"])
+            self.assertEqual(env_path.read_text(encoding="utf-8"), "BYBIT_API_KEY=key\nBYBIT_API_SECRET=secret\n")
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    def test_seed_dev_test_trades_inserts_requested_count(self) -> None:
+        # The dev helper should populate the DB with many distinct rows for UI testing.
+        result = journal_service.seed_dev_test_trades(count=20)
+        trades = db.get_all_trades()
+
+        self.assertEqual(result["requested"], 20)
+        self.assertEqual(result["inserted"], 20)
+        self.assertEqual(len(trades), 20)
+        self.assertEqual(trades[0].bybit_trade_id, "DEVTEST-020")
+
+    def test_export_trades_to_excel_returns_export_metadata(self) -> None:
+        # Mock the workbook builder so the test validates the export flow only.
+        self.insert_trade(bybit_trade_id="A", symbol="BTCUSDT", pnl=5.0)
+        saved_paths = []
+
+        class FakeWorkbook:
+            def save(self, path) -> None:
+                saved_paths.append(str(path))
+
+        with patch.object(
+            journal_service,
+            "_build_excel_workbook",
+            return_value=FakeWorkbook(),
+        ):
+            result = journal_service.export_trades_to_excel(symbol="BTCUSDT")
+
+        self.assertTrue(result["exported"])
+        self.assertEqual(result["count"], 1)
+        self.assertEqual(result["filters"]["symbol"], "BTCUSDT")
+        self.assertEqual(len(saved_paths), 1)
+        self.assertTrue(saved_paths[0].endswith(".xlsx"))
+
+
+class SyncTests(unittest.TestCase):
+    """Execution mapping and Bybit pagination behavior."""
+
+    def test_execution_to_trade_maps_expected_fields(self) -> None:
+        execution = {
+            "execId": "abc123",
+            "symbol": "btcusdt",
+            "side": "Buy",
+            "execQty": "0.25",
+            "execPrice": "64000",
+            "execPnl": "12.5",
+            "execTime": "1710000000000",
+        }
+
+        trade = sync.execution_to_trade(execution)
+
+        self.assertEqual(trade.bybit_trade_id, "abc123")
+        self.assertEqual(trade.symbol, "BTCUSDT")
+        self.assertEqual(trade.side, "Buy")
+        self.assertEqual(trade.qty, 0.25)
+        self.assertEqual(trade.entry_price, 64000.0)
+        self.assertEqual(trade.exit_price, 64000.0)
+        self.assertEqual(trade.pnl, 12.5)
+        self.assertEqual(trade.invested_amount, 16000.0)
+        self.assertEqual(trade.trade_time, "2024-03-09 16:00:00")
+
+    def test_fetch_all_executions_from_category_follows_pagination(self) -> None:
+        # The second API call must reuse the cursor returned by the first page.
+        first_page = {
+            "retCode": 0,
+            "result": {
+                "list": [{"execId": "1"}, {"execId": "2"}],
+                "nextPageCursor": "cursor-1",
+            },
+        }
+        second_page = {
+            "retCode": 0,
+            "result": {
+                "list": [{"execId": "3"}],
+                "nextPageCursor": "",
+            },
+        }
+
+        with patch.object(sync, "get_executions", side_effect=[first_page, second_page]) as mocked:
+            executions = sync.fetch_all_executions_from_category(
+                category="linear",
+                start_time=1,
+                end_time=2,
+                limit=100,
+            )
+
+        self.assertEqual([item["execId"] for item in executions], ["1", "2", "3"])
+        self.assertEqual(mocked.call_count, 2)
+        self.assertEqual(mocked.call_args_list[1].kwargs["cursor"], "cursor-1")
+
+
+class DesktopTests(unittest.TestCase):
+    """Desktop shell tests for frontend loading and bridge envelopes."""
+
+    def test_get_frontend_entrypoint_targets_local_index_file(self) -> None:
+        entrypoint = window.get_frontend_entrypoint()
+
+        self.assertTrue(entrypoint.startswith("file:///"))
+        self.assertIn("frontend/index.html", entrypoint.replace("\\", "/"))
+
+    def test_desktop_bridge_wraps_service_response(self) -> None:
+        bridge = DesktopBridge()
+        fake_dashboard = {"stats": {"total_trades": 2}}
+
+        with patch("bridge.get_dashboard_data", return_value=fake_dashboard):
+            result = bridge.get_dashboard()
+
+        self.assertTrue(result["success"])
+        self.assertEqual(result["data"]["stats"]["total_trades"], 2)
+
+if __name__ == "__main__":
+    unittest.main()

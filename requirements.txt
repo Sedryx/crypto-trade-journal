@@ -1,2 +1,4 @@
-requests
+openpyxl
+pywebview
 python-dotenv
+requests
