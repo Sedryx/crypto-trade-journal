@@ -1,31 +1,36 @@
 # Bybit Trade Journal
 
-Bybit Trade Journal est une application desktop locale pour synchroniser des executions Bybit, les stocker dans SQLite, analyser les statistiques du journal et exporter les trades en Excel.
+Bybit Trade Journal is a local desktop application used to sync Bybit executions, store them in SQLite, analyze journal statistics, and export trades to Excel.
 
-L'application repose sur :
+The application is built around:
 
-- un backend Python modulaire
-- une interface desktop PyWebView
-- un frontend local en HTML / CSS / JavaScript
+- a modular Python backend
+- a PyWebView desktop shell
+- a local HTML / CSS / JavaScript frontend
+- Windows packaging assets for PyInstaller and Inno Setup
 
-## Fonctionnalites actuelles
+## Current Features
 
-- creation automatique des dossiers de travail
-- creation automatique du fichier `.env` a la racine du projet
-- chargement des cles API Bybit
-- initialisation de la base SQLite
-- synchronisation Bybit paginee par categorie
-- synchronisation automatique au lancement de l'application
-- prevention des doublons via `bybit_trade_id` unique
-- dashboard wallet et resume du compte
-- affichage du `Total equity`, des stablecoins et des autres actifs
-- changement de devise d'affichage du wallet (`USD`, `JPY`, `GBP`, `CHF`, `EUR`)
-- liste de trades avec filtres
-- statistiques de base
-- export Excel des trades filtres
-- bouton de dev pour injecter des trades de test
+- automatic creation of local working directories
+- automatic creation of the user `.env` file
+- user config stored in a Windows-friendly folder
+- loading of Bybit API credentials
+- SQLite database initialization
+- paginated Bybit synchronization by category
+- automatic synchronization at application startup
+- duplicate prevention through unique `bybit_trade_id`
+- dashboard with account and wallet summary
+- display of `Total equity`, stablecoins, and other assets
+- wallet display currency switcher (`USD`, `JPY`, `GBP`, `CHF`, `EUR`)
+- filtered trade list
+- basic trading statistics
+- Excel export for filtered trades
+- development button to inject test trades
+- PyInstaller build spec for Windows
+- WebView2 prerequisite check
+- Inno Setup installer script
 
-## Structure
+## Project Structure
 
 ```text
 crypto-trade-journal/
@@ -36,14 +41,12 @@ crypto-trade-journal/
     |-- desktop/
     |   |-- bridge.py
     |   |-- main.py
+    |   |-- prerequisites.py
     |   `-- window.py
     |-- frontend/
     |   |-- app.js
     |   |-- index.html
     |   `-- styles.css
-    |-- data/
-    |   `-- journal.db
-    |-- exports/
     |-- src/
     |   |-- api.py
     |   |-- config.py
@@ -55,23 +58,29 @@ crypto-trade-journal/
     |       `-- journal_service.py
     `-- tests/
         `-- test_core.py
+|-- packaging/
+|   |-- build_windows.ps1
+|   |-- check_webview2.ps1
+|   |-- pyinstaller.spec
+|   `-- installer/
+|       `-- BybitTradeJournal.iss
 ```
 
-## Prerequis
+## Requirements
 
-- Python 3.13 recommande
-- une cle API Bybit avec acces lecture
-- une connexion internet pour les appels API
+- Python 3.13 recommended
+- a Bybit API key with read access
+- an internet connection for API calls
 
 ## Installation
 
-Depuis la racine du projet :
+From the project root:
 
 ```powershell
 python -m pip install -r requirements.txt
 ```
 
-Si tu utilises le venv du projet :
+If you are using the project's virtual environment:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
@@ -81,84 +90,148 @@ python -m pip install -r requirements.txt
 
 ## Configuration
 
-Au premier lancement, l'application cree automatiquement le fichier :
+On first launch, the application automatically creates a user `.env` file in:
 
 ```text
-/.env
+%APPDATA%/BybitTradeJournal/config/.env
 ```
 
-avec :
+with:
 
 ```env
 BYBIT_API_KEY=
 BYBIT_API_SECRET=
 ```
 
-Tu peux ensuite remplir les cles depuis l'ecran `Configuration` de l'application.
+You can then fill in your credentials from the `Configuration` screen inside the application.
 
-## Lancement
+## User Storage
 
-Le point d'entree de l'application est :
+The desktop application now uses:
+
+- config: `%APPDATA%/BybitTradeJournal/config/.env`
+- SQLite database: `%APPDATA%/BybitTradeJournal/data/journal.db`
+- log file: `%APPDATA%/BybitTradeJournal/data/log`
+- exports: `%USERPROFILE%/Documents/BybitTradeJournal/exports/`
+
+If an older project-root `.env`, a project-local `bybit_journal/data/journal.db`, a local log file, or old export files already exist, the app copies them to the active user folders automatically.
+
+## Launch
+
+The desktop entrypoint is:
 
 ```text
 bybit_journal/desktop/main.py
 ```
 
-Commande :
+Run:
 
 ```powershell
 python bybit_journal/desktop/main.py
 ```
 
-## Ecrans principaux
+## Main Screens
 
-- `Dashboard` : etat API, wallet, resume du compte et trades recents
-- `Trades` : filtres, table SQLite, export Excel et resume d'export
-- `Synchronisation` : import Bybit sur une plage de jours
-- `Statistiques` : PnL, win rate et indicateurs globaux
-- `Configuration` : gestion du `.env` et bouton `DEV TEST ONLY`
+- `Dashboard`: API status, wallet, account summary, and recent trades
+- `Trades`: filters, SQLite trade table, Excel export, and export summary
+- `Synchronization`: Bybit import over a selected day range
+- `Statistics`: PnL, win rate, and global indicators
+- `Configuration`: `.env` management and `DEV TEST ONLY` button
 
-## Export Excel
+## Excel Export
 
-L'export Excel utilise les filtres de la vue `Trades` et cree un fichier `.xlsx` dans :
+The Excel export uses the current filters from the `Trades` view and creates a `.xlsx` file in:
 
 ```text
-bybit_journal/exports/
+%USERPROFILE%/Documents/BybitTradeJournal/exports/
 ```
 
-Le fichier contient :
+The file contains:
 
-- une feuille `Trades`
-- une feuille `Stats`
+- a `Trades` worksheet
+- a `Stats` worksheet
 
-## Comportement au lancement
+## Startup Behavior
 
-Au demarrage :
+At launch:
 
-- le backend Python initialise les dossiers, le `.env` et SQLite
-- le frontend charge le dashboard, les trades et les statistiques
-- si l'API Bybit est configuree, une synchronisation automatique se lance apres 1 seconde
+- the Python backend initializes folders, the `.env`, and SQLite
+- legacy `.env`, SQLite, log, and export files are migrated if needed
+- the frontend loads the dashboard, trades, and statistics
+- if the Bybit API is configured, an automatic synchronization starts after 1 second
+
+## Windows Build
+
+Build the application with PyInstaller:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\packaging\build_windows.ps1
+```
+
+This produces a first Windows build in:
+
+```text
+dist/BybitTradeJournal/
+```
+
+## Windows Prerequisite
+
+PyWebView relies on Microsoft Edge WebView2 on Windows.
+
+Check it manually with:
+
+```powershell
+.\packaging\check_webview2.ps1
+```
+
+If WebView2 is missing, install it from:
+
+```text
+https://go.microsoft.com/fwlink/p/?LinkId=2124703
+```
+
+## Windows Installer
+
+An Inno Setup installer script is provided in:
+
+```text
+packaging/installer/BybitTradeJournal.iss
+```
+
+Expected flow:
+
+1. build the app with PyInstaller
+2. open the `.iss` file in Inno Setup
+3. compile the installer
+
+The generated installer is configured to:
+
+- install the packaged desktop app into `Program Files`
+- create Start Menu and Desktop shortcuts
+- keep user data outside the install folder
+- warn when WebView2 is missing before first launch
 
 ## Tests
 
-Lancer les tests :
+Run the test suite:
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s bybit_journal/tests -p "test_*.py" -v
 ```
 
-Verifier la compilation :
+Check compilation:
 
 ```powershell
 .\.venv\Scripts\python.exe -m compileall bybit_journal/src bybit_journal/tests bybit_journal/desktop
 ```
 
-## Limites actuelles
+## Current Limitations
 
-- l'application est orientee desktop local Windows
-- le packaging final `.exe` + installateur n'est pas encore termine
-- le bouton `DEV TEST ONLY` est present pour remplir rapidement la base en developpement
+- the application is currently focused on local Windows desktop usage
+- the Inno Setup installer script is ready, but the installer must still be compiled on a machine with Inno Setup installed
+- the `DEV TEST ONLY` button is still present for development convenience
 
 ## Note
 
-Projet personnel a but organisationnel et educatif. Non affilie a Bybit.
+This is a personal trading journal project for organizational and educational use.
+It is not affiliated with Bybit.

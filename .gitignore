@@ -29,16 +29,15 @@ logs/
 # Local databases and generated app data
 *.db
 *.sqlite3
-bybit_journal/data/
 bybit_journal/.tmp_tests/
 
 # Generated outputs
-bybit_journal/screenshots/
 bybit_journal/exports/
 
 # Python build artifacts
 build/
 dist/
+dist_installer/
 *.egg-info/
 *.spec
 

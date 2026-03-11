@@ -2,6 +2,7 @@
 
 from services.journal_service import (
     configure_api_credentials,
+    delete_trade_data,
     export_trades_to_excel,
     get_dashboard_data,
     get_api_status_data,

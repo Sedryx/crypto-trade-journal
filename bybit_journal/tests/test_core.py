@@ -34,18 +34,52 @@ class TemporaryDbTestCase(unittest.TestCase):
         self.temp_dir = TEMP_ROOT / f"db-{uuid.uuid4().hex}"
         self.temp_dir.mkdir()
         self.temp_db_path = self.temp_dir / "journal.db"
+        self.temp_config_dir = self.temp_dir / "config"
+        self.temp_data_dir = self.temp_dir / "data"
+        self.temp_exports_dir = self.temp_dir / "exports"
+        self.temp_env_path = self.temp_config_dir / ".env"
 
         # Patch the runtime DB path so each test writes into its own temp file.
         self.db_path_patcher = patch.object(db, "DB_PATH", self.temp_db_path)
         self.ensure_directories_patcher = patch.object(
             db, "ensure_directories", lambda: self.temp_db_path.parent.mkdir(exist_ok=True)
         )
+        self.config_dir_patcher = patch.object(config, "USER_CONFIG_DIR", self.temp_config_dir)
+        self.data_dir_patcher = patch.object(config, "USER_DATA_DIR", self.temp_data_dir)
+        self.exports_dir_patcher = patch.object(config, "EXPORTS_DIR", self.temp_exports_dir)
+        self.env_path_patcher = patch.object(config, "ENV_PATH", self.temp_env_path)
+        self.db_runtime_path_patcher = patch.object(config, "DB_PATH", self.temp_db_path)
+        self.legacy_env_patcher = patch.object(config, "LEGACY_ENV_PATH", self.temp_dir / "legacy.env")
+        self.log_runtime_path_patcher = patch.object(config, "LOG_PATH", self.temp_data_dir / "log")
+        self.legacy_db_patcher = patch.object(config, "LEGACY_DB_PATH", self.temp_dir / "legacy.db")
+        self.legacy_log_patcher = patch.object(config, "LEGACY_LOG_PATH", self.temp_dir / "legacy.log")
+        self.legacy_exports_patcher = patch.object(config, "LEGACY_EXPORTS_DIR", self.temp_dir / "legacy_exports")
 
         self.db_path_patcher.start()
         self.ensure_directories_patcher.start()
+        self.config_dir_patcher.start()
+        self.data_dir_patcher.start()
+        self.exports_dir_patcher.start()
+        self.env_path_patcher.start()
+        self.db_runtime_path_patcher.start()
+        self.log_runtime_path_patcher.start()
+        self.legacy_env_patcher.start()
+        self.legacy_db_patcher.start()
+        self.legacy_log_patcher.start()
+        self.legacy_exports_patcher.start()
         db.init_db()
 
     def tearDown(self) -> None:
+        self.legacy_exports_patcher.stop()
+        self.legacy_log_patcher.stop()
+        self.legacy_db_patcher.stop()
+        self.legacy_env_patcher.stop()
+        self.log_runtime_path_patcher.stop()
+        self.db_runtime_path_patcher.stop()
+        self.env_path_patcher.stop()
+        self.exports_dir_patcher.stop()
+        self.data_dir_patcher.stop()
+        self.config_dir_patcher.stop()
         self.ensure_directories_patcher.stop()
         self.db_path_patcher.stop()
         shutil.rmtree(self.temp_dir, ignore_errors=True)
@@ -78,10 +112,24 @@ class ConfigTests(unittest.TestCase):
         TEMP_ROOT.mkdir(exist_ok=True)
         temp_dir = TEMP_ROOT / f"config-{uuid.uuid4().hex}"
         temp_dir.mkdir()
-        env_path = temp_dir / ".env"
+        config_dir = temp_dir / "config"
+        data_dir = temp_dir / "data"
+        exports_dir = temp_dir / "exports"
+        env_path = config_dir / ".env"
 
         try:
-            with patch.object(config, "ENV_PATH", env_path):
+            with (
+                patch.object(config, "USER_CONFIG_DIR", config_dir),
+                patch.object(config, "USER_DATA_DIR", data_dir),
+                patch.object(config, "EXPORTS_DIR", exports_dir),
+                patch.object(config, "ENV_PATH", env_path),
+                patch.object(config, "DB_PATH", data_dir / "journal.db"),
+                patch.object(config, "LOG_PATH", data_dir / "log"),
+                patch.object(config, "LEGACY_ENV_PATH", temp_dir / "missing.env"),
+                patch.object(config, "LEGACY_DB_PATH", temp_dir / "missing.db"),
+                patch.object(config, "LEGACY_LOG_PATH", temp_dir / "missing.log"),
+                patch.object(config, "LEGACY_EXPORTS_DIR", temp_dir / "missing_exports"),
+            ):
                 config.ensure_env_file()
 
             self.assertTrue(env_path.exists())
@@ -89,6 +137,38 @@ class ConfigTests(unittest.TestCase):
                 env_path.read_text(encoding="utf-8"),
                 "BYBIT_API_KEY=\nBYBIT_API_SECRET=\n",
             )
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+
+    def test_ensure_directories_migrates_legacy_env_file(self) -> None:
+        TEMP_ROOT.mkdir(exist_ok=True)
+        temp_dir = TEMP_ROOT / f"migrate-{uuid.uuid4().hex}"
+        temp_dir.mkdir()
+        legacy_env_path = temp_dir / "legacy.env"
+        new_config_dir = temp_dir / "config"
+        new_data_dir = temp_dir / "data"
+        new_exports_dir = temp_dir / "exports"
+        new_env_path = new_config_dir / ".env"
+        new_db_path = new_data_dir / "journal.db"
+        legacy_env_path.write_text("BYBIT_API_KEY=old\nBYBIT_API_SECRET=secret\n", encoding="utf-8")
+
+        try:
+            with (
+                patch.object(config, "LEGACY_ENV_PATH", legacy_env_path),
+                patch.object(config, "USER_CONFIG_DIR", new_config_dir),
+                patch.object(config, "USER_DATA_DIR", new_data_dir),
+                patch.object(config, "EXPORTS_DIR", new_exports_dir),
+                patch.object(config, "ENV_PATH", new_env_path),
+                patch.object(config, "DB_PATH", new_db_path),
+                patch.object(config, "LOG_PATH", new_data_dir / "log"),
+                patch.object(config, "LEGACY_EXPORTS_DIR", temp_dir / "missing_exports"),
+                patch.object(config, "LEGACY_DB_PATH", temp_dir / "missing.db"),
+                patch.object(config, "LEGACY_LOG_PATH", temp_dir / "missing.log"),
+            ):
+                config.ensure_directories()
+
+            self.assertTrue(new_env_path.exists())
+            self.assertIn("BYBIT_API_KEY=old", new_env_path.read_text(encoding="utf-8"))
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
 
@@ -158,6 +238,16 @@ class DatabaseTests(TemporaryDbTestCase):
         self.assertEqual(stats["total_invested_amount"], 175.0)
         self.assertAlmostEqual(stats["win_rate"], 33.3333, places=3)
 
+    def test_delete_trade_by_id_removes_row(self) -> None:
+        self.insert_trade(bybit_trade_id="A")
+        trade = db.get_all_trades()[0]
+
+        deleted = db.delete_trade_by_id(trade.id)
+        trades = db.get_all_trades()
+
+        self.assertTrue(deleted)
+        self.assertEqual(len(trades), 0)
+
 
 class ServiceTests(TemporaryDbTestCase):
     """Service-layer tests used by the desktop bridge and frontend."""
@@ -185,6 +275,8 @@ class ServiceTests(TemporaryDbTestCase):
 
         self.assertFalse(status["has_credentials"])
         self.assertIn("incomplete", status["message"])
+        self.assertIn("db_path", status)
+        self.assertIn("exports_dir", status)
 
     def test_sync_bybit_trades_data_returns_structured_summary(self) -> None:
         # One mocked call per Bybit category: linear, spot, inverse, option.
@@ -290,10 +382,24 @@ class ServiceTests(TemporaryDbTestCase):
         TEMP_ROOT.mkdir(exist_ok=True)
         temp_dir = TEMP_ROOT / f"env-write-{uuid.uuid4().hex}"
         temp_dir.mkdir()
-        env_path = temp_dir / ".env"
+        config_dir = temp_dir / "config"
+        data_dir = temp_dir / "data"
+        exports_dir = temp_dir / "exports"
+        env_path = config_dir / ".env"
 
         try:
-            with patch.object(config, "ENV_PATH", env_path):
+            with (
+                patch.object(config, "USER_CONFIG_DIR", config_dir),
+                patch.object(config, "USER_DATA_DIR", data_dir),
+                patch.object(config, "EXPORTS_DIR", exports_dir),
+                patch.object(config, "ENV_PATH", env_path),
+                patch.object(config, "DB_PATH", data_dir / "journal.db"),
+                patch.object(config, "LOG_PATH", data_dir / "log"),
+                patch.object(config, "LEGACY_ENV_PATH", temp_dir / "missing.env"),
+                patch.object(config, "LEGACY_DB_PATH", temp_dir / "missing.db"),
+                patch.object(config, "LEGACY_LOG_PATH", temp_dir / "missing.log"),
+                patch.object(config, "LEGACY_EXPORTS_DIR", temp_dir / "missing_exports"),
+            ):
                 result = journal_service.configure_api_credentials("key", "secret")
 
             self.assertTrue(result["saved"])
@@ -332,6 +438,16 @@ class ServiceTests(TemporaryDbTestCase):
         self.assertEqual(result["filters"]["symbol"], "BTCUSDT")
         self.assertEqual(len(saved_paths), 1)
         self.assertTrue(saved_paths[0].endswith(".xlsx"))
+
+    def test_delete_trade_data_returns_deleted_summary(self) -> None:
+        self.insert_trade(bybit_trade_id="A")
+        trade = db.get_all_trades()[0]
+
+        result = journal_service.delete_trade_data(trade.id)
+
+        self.assertTrue(result["deleted"])
+        self.assertEqual(result["trade_id"], trade.id)
+        self.assertEqual(len(db.get_all_trades()), 0)
 
 
 class SyncTests(unittest.TestCase):

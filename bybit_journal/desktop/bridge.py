@@ -2,6 +2,7 @@
 
 from services import (
     configure_api_credentials,
+    delete_trade_data,
     export_trades_to_excel,
     get_api_status_data,
     get_dashboard_data,
@@ -66,3 +67,7 @@ class DesktopBridge:
         """Create an Excel export from the currently selected trade filters."""
         payload = filters or {}
         return self._invoke(export_trades_to_excel, **payload)
+
+    def delete_trade(self, trade_id: int) -> dict:
+        """Delete one trade from SQLite using its local id."""
+        return self._invoke(delete_trade_data, trade_id=trade_id)

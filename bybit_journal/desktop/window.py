@@ -33,4 +33,4 @@ def start_desktop_app(api=None) -> None:
         min_size=(1080, 720),
         text_select=True,
     )
-    webview.start(debug=True)
+    webview.start(debug=not getattr(sys, "frozen", False))

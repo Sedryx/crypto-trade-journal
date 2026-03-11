@@ -7,7 +7,7 @@ from pathlib import Path
 
 import config
 from api import get_wallet_balance
-from db import get_trade_stats, init_db, insert_trade, query_trades
+from db import delete_trade_by_id, get_trade_stats, init_db, insert_trade, query_trades
 from models import Trade
 import requests
 from sync import sync_executions_from_category
@@ -55,6 +55,8 @@ def get_api_status_data() -> dict:
     return {
         "has_credentials": has_credentials,
         "env_path": str(config.ENV_PATH),
+        "db_path": str(config.DB_PATH),
+        "exports_dir": str(config.EXPORTS_DIR),
         "message": (
             "Configuration API : OK"
             if has_credentials
@@ -246,6 +248,7 @@ def export_trades_to_excel(
     end_time: str | None = None,
     min_pnl: float | None = None,
     max_pnl: float | None = None,
+    limit: int | None = None,
 ) -> dict:
     """Export filtered trades and summary stats to an Excel workbook."""
     export_data = get_trades_data(
@@ -255,7 +258,7 @@ def export_trades_to_excel(
         end_time=end_time,
         min_pnl=min_pnl,
         max_pnl=max_pnl,
-        limit=None,
+        limit=limit,
     )
     stats = get_trade_stats_data(
         symbol=symbol,
@@ -277,6 +280,18 @@ def export_trades_to_excel(
         "count": export_data["count"],
         "filters": export_data["filters"],
         "generated_at": exported_at,
+    }
+
+
+def delete_trade_data(trade_id: int) -> dict:
+    """Delete one stored trade and return a small UI-friendly summary."""
+    deleted = delete_trade_by_id(trade_id)
+    if not deleted:
+        raise ValueError(f"Trade introuvable pour suppression: id={trade_id}")
+
+    return {
+        "deleted": True,
+        "trade_id": trade_id,
     }
 
 

@@ -92,6 +92,17 @@ def insert_trade(trade: Trade) -> bool:
     return inserted
 
 
+def delete_trade_by_id(trade_id: int) -> bool:
+    """Delete one trade by SQLite id and return True if a row was removed."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM trades WHERE id = ?", (trade_id,))
+    deleted = cursor.rowcount == 1
+    conn.commit()
+    conn.close()
+    return deleted
+
+
 def _row_to_trade(row: tuple) -> Trade:
     """Convert a SQLite row into the Trade dataclass."""
     return Trade(

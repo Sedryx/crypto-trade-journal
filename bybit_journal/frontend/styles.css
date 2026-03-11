@@ -396,7 +396,8 @@ body::before {
 .sync-summary,
 .insight-grid,
 .settings-list,
-.wallet-grid {
+.wallet-grid,
+.export-helper-grid {
   display: grid;
   gap: 14px;
 }
@@ -445,6 +446,15 @@ body::before {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
     linear-gradient(135deg, rgba(133, 64, 255, 0.08), rgba(203, 132, 255, 0.04));
+}
+
+.export-helper-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 14px;
+}
+
+.helper-item {
+  min-height: 120px;
 }
 
 .timeline-item {
@@ -574,6 +584,16 @@ body::before {
   color: var(--danger);
 }
 
+.row-action-button {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 123, 165, 0.25);
+  background: rgba(255, 123, 165, 0.08);
+  color: #ffd8e4;
+  font: inherit;
+  cursor: pointer;
+}
+
 .progress-shell {
   display: grid;
   gap: 12px;
@@ -642,7 +662,8 @@ body::before {
   }
 
   .filters-grid,
-  .metric-grid {
+  .metric-grid,
+  .export-helper-grid {
     grid-template-columns: 1fr;
   }
 

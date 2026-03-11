@@ -99,6 +99,9 @@ function renderTradeRows(trades) {
           <td>${trade.qty ?? "-"}</td>
           <td class="trade-pnl ${pnl >= 0 ? "positive" : "negative"}">${formatNumber(pnl)}</td>
           <td>${trade.trade_time || "-"}</td>
+          <td>
+            <button class="row-action-button" data-trade-id="${trade.id}">Supprimer</button>
+          </td>
         </tr>
       `;
     })
@@ -312,6 +315,8 @@ function updateApiStatus(apiStatus) {
     apiStatus.has_credentials ? "success" : "warning"
   }`;
   document.getElementById("settings-env-path").textContent = apiStatus.env_path || "-";
+  document.getElementById("settings-db-path").textContent = apiStatus.db_path || "-";
+  document.getElementById("settings-exports-path").textContent = apiStatus.exports_dir || "-";
 }
 
 function normalizeDateInput(value, endOfDay = false) {
@@ -418,6 +423,12 @@ async function exportTradesExcel() {
   setBanner("Export Excel termine", `${data.count} trade(s) exporte(s) vers ${data.path}`);
 }
 
+async function deleteTrade(tradeId) {
+  await callBridge("delete_trade", Number(tradeId));
+  setBanner("Trade supprime", `Le trade local ${tradeId} a ete retire de la base.`);
+  await Promise.all([loadTrades(), loadDashboard(), loadStats()]);
+}
+
 async function seedDevTrades() {
   const data = await callBridge("seed_dev_trades", 20);
   setBanner("Trades de dev ajoutes", `${data.inserted} trade(s) de test insere(s) dans SQLite.`);
@@ -449,6 +460,13 @@ function bindEvents() {
   document.getElementById("dashboard-open-settings-button").addEventListener("click", () => {
     setActiveView("settings");
     runAction(refreshApiStatus, "Erreur configuration");
+  });
+  document.getElementById("trade-table-body").addEventListener("click", (event) => {
+    const button = event.target.closest(".row-action-button");
+    if (!button) {
+      return;
+    }
+    runAction(() => deleteTrade(button.dataset.tradeId), "Erreur suppression");
   });
 
   document

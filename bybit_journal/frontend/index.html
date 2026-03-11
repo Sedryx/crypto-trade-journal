@@ -274,6 +274,7 @@
                   <th>Qty</th>
                   <th>PnL</th>
                   <th>Date</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody id="trade-table-body"></tbody>
@@ -286,6 +287,20 @@
             <div>
               <p class="eyebrow">Export</p>
               <h3>Sortie Excel</h3>
+            </div>
+          </div>
+          <div class="export-helper-grid">
+            <div class="compact-item helper-item">
+              <p class="compact-title">Ce qui est exporte</p>
+              <p class="compact-copy">Les filtres actuels de cette page sont reutilises dans le fichier Excel.</p>
+            </div>
+            <div class="compact-item helper-item">
+              <p class="compact-title">Contenu du fichier</p>
+              <p class="compact-copy">Le classeur contient une feuille `Trades` et une feuille `Stats`.</p>
+            </div>
+            <div class="compact-item helper-item">
+              <p class="compact-title">Ou le trouver</p>
+              <p class="compact-copy">Le fichier `.xlsx` est cree dans le dossier local `bybit_journal/exports/`.</p>
             </div>
           </div>
           <div class="compact-list" id="export-summary">
@@ -409,6 +424,14 @@
                 <span>Fichier .env</span>
                 <strong class="badge neutral" id="settings-env-path">-</strong>
               </div>
+              <div class="setting-row">
+                <span>Base SQLite</span>
+                <strong class="badge neutral" id="settings-db-path">-</strong>
+              </div>
+              <div class="setting-row">
+                <span>Dossier exports</span>
+                <strong class="badge neutral" id="settings-exports-path">-</strong>
+              </div>
             </div>
 
             <div class="settings-form">
@@ -431,17 +454,17 @@
             <div class="panel-header">
               <div>
                 <p class="eyebrow">Fichiers</p>
-                <h3>Organisation locale</h3>
+                <h3>Stockage utilisateur</h3>
               </div>
             </div>
             <div class="settings-list">
               <div class="setting-row">
-                <span>Base SQLite</span>
-                <strong class="badge neutral">journal.db</strong>
+                <span>Configuration</span>
+                <strong class="badge neutral">AppData Roaming</strong>
               </div>
               <div class="setting-row">
                 <span>Exports</span>
-                <strong class="badge neutral">Folder local</strong>
+                <strong class="badge neutral">Documents utilisateur</strong>
               </div>
               <div class="setting-row">
                 <span>Bridge desktop</span>
