@@ -18,6 +18,8 @@ bybit_journal/.env.*
 # Local editor files
 .vscode/
 .idea/
+commandeDev.txt
+commandeDev.*
 todo.md
 PLAN_FUTUR.md
 ETAPE_FUTUR.md
@@ -25,14 +27,18 @@ ETAPE_FUTUR.md
 # Logs
 *.log
 logs/
+bybit_journal/data/log
 
 # Local databases and generated app data
 *.db
 *.sqlite3
 bybit_journal/.tmp_tests/
+bybit_journal/desktop/build/
+bybit_journal/desktop/dist/
 
 # Generated outputs
 bybit_journal/exports/
+dist/*.zip
 
 # Python build artifacts
 build/

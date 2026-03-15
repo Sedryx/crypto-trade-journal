@@ -1,4 +1,5 @@
 openpyxl
+Pillow
 pywebview
 python-dotenv
 requests

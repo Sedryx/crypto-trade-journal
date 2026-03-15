@@ -1,6 +1,26 @@
 # Bybit Trade Journal
 
-Bybit Trade Journal is a local desktop application used to sync Bybit executions, store them in SQLite, analyze journal statistics, and export trades to Excel.
+Desktop trading journal for Bybit with local sync, SQLite storage, statistics, Excel export, and a Windows desktop UI built with Python and PyWebView.
+
+## Important If You Download the project !
+
+When you download the packaged application as a `.zip` and it does not start correctly on Windows, follow these steps before reporting an app bug:
+
+1. Delete the extracted folder.
+2. Right-click the `.zip` file, open `Properties`, and click `Unblock` if that option is available.
+3. Extract the `.zip` again.
+4. If needed, open PowerShell and run:
+
+```powershell
+Get-ChildItem "D:\BybitTradeJournal" -Recurse | Unblock-File
+```
+
+5. Launch `BybitTradeJournal.exe` again.
+6. Also make sure Microsoft Edge WebView2 is installed.
+
+
+
+## Stack
 
 The application is built around:
 
@@ -9,11 +29,21 @@ The application is built around:
 - a local HTML / CSS / JavaScript frontend
 - Windows packaging assets for PyInstaller and Inno Setup
 
+## Release Snapshot
+
+- Windows desktop application
+- local SQLite journal
+- Bybit sync with startup auto-sync support
+- wallet overview and recent PnL chart
+- trade notes and screenshot path fields
+- Excel export
+- backup / restore tools
+- PyInstaller build
+
 ## Current Features
 
 - automatic creation of local working directories
 - automatic creation of the user `.env` file
-- user config stored in a Windows-friendly folder
 - loading of Bybit API credentials
 - SQLite database initialization
 - paginated Bybit synchronization by category
@@ -27,13 +57,12 @@ The application is built around:
 - basic trading statistics
 - chart view based on recent trade PnL
 - Excel export for filtered trades
-- storage helpers to open config, data, and export folders
+- storage helpers to open config, data, export, and backup folders
 - sync preferences for startup auto-sync and default sync days
 - SQLite backup and restore helpers
-- development tools hidden outside dev mode
 - PyInstaller build spec for Windows
 - WebView2 prerequisite check
-- Inno Setup installer script
+- Windows zip distribution
 
 ## Project Structure
 
@@ -41,8 +70,14 @@ The application is built around:
 crypto-trade-journal/
 |-- README.md
 |-- requirements.txt
-|-- ETAPE_FUTUR.md
+|-- packaging/
+|   |-- build_windows.ps1
+|   |-- check_webview2.ps1
+|   |-- pyinstaller.spec
+|   `-- installer/
+|       `-- BybitTradeJournal.iss
 `-- bybit_journal/
+    |-- data/
     |-- desktop/
     |   |-- bridge.py
     |   |-- main.py
@@ -50,6 +85,7 @@ crypto-trade-journal/
     |   `-- window.py
     |-- frontend/
     |   |-- app.js
+    |   |-- asset/
     |   |-- index.html
     |   `-- styles.css
     |-- src/
@@ -63,12 +99,6 @@ crypto-trade-journal/
     |       `-- journal_service.py
     `-- tests/
         `-- test_core.py
-|-- packaging/
-|   |-- build_windows.ps1
-|   |-- check_webview2.ps1
-|   |-- pyinstaller.spec
-|   `-- installer/
-|       `-- BybitTradeJournal.iss
 ```
 
 ## Requirements
@@ -85,13 +115,15 @@ From the project root:
 python -m pip install -r requirements.txt
 ```
 
-If you are using the project's virtual environment:
+If you are using the project virtual environment:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
+
+For Windows builds, `Pillow` is required so PyInstaller can process the application icon correctly. It is already included in `requirements.txt`.
 
 ## Configuration
 
@@ -112,14 +144,15 @@ You can then fill in your credentials from the `Configuration` screen inside the
 
 ## User Storage
 
-The desktop application now uses:
+The packaged desktop application is intended to use:
 
 - config: `%APPDATA%/BybitTradeJournal/config/.env`
 - SQLite database: `%APPDATA%/BybitTradeJournal/data/journal.db`
 - log file: `%APPDATA%/BybitTradeJournal/data/log`
 - exports: `%USERPROFILE%/Documents/BybitTradeJournal/exports/`
+- backups: `%USERPROFILE%/Documents/BybitTradeJournal/backups/`
 
-If an older project-root `.env`, a project-local `bybit_journal/data/journal.db`, a local log file, or old export files already exist, the app copies them to the active user folders automatically.
+The repository may still contain local development data under [`bybit_journal/data`](c:/Users/joach/OneDrive%20-%20EDUETATFR/Documents/Moi/crypto-trade-journal/bybit_journal/data), but the release build is intended to rely on the Windows user folders above.
 
 ## Launch
 
@@ -161,16 +194,8 @@ The file contains:
 At launch:
 
 - the Python backend initializes folders, the `.env`, and SQLite
-- legacy `.env`, SQLite, log, and export files are migrated if needed
 - the frontend loads the dashboard, trades, and statistics
-- if the Bybit API is configured, an automatic synchronization starts after 1 second
-
-## UX Notes
-
-- the packaged app is intended to use `%APPDATA%` and `%Documents%` as the real runtime storage
-- deletion from the trades table requires confirmation
-- the settings screen can open the active config, data, and export folders
-- the `DEV TEST ONLY` action is shown only in dev mode
+- if the Bybit API is configured and auto-sync is enabled, synchronization starts automatically shortly after the window opens
 
 ## Windows Build
 
@@ -180,11 +205,29 @@ Build the application with PyInstaller:
 powershell -ExecutionPolicy Bypass -File .\packaging\build_windows.ps1
 ```
 
-This produces a first Windows build in:
+If you want a clean rebuild:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\packaging\build_windows.ps1 -Clean
+```
+
+This produces a Windows build in:
 
 ```text
 dist/BybitTradeJournal/
 ```
+
+The packaged executable is:
+
+```text
+dist/BybitTradeJournal/BybitTradeJournal.exe
+```
+
+The build script expects:
+
+- the project virtual environment in `.venv`
+- `PyInstaller` installed in that virtual environment
+- `Pillow` installed in that virtual environment for icon processing
 
 ## Windows Prerequisite
 
@@ -202,26 +245,11 @@ If WebView2 is missing, install it from:
 https://go.microsoft.com/fwlink/p/?LinkId=2124703
 ```
 
-## Windows Installer
+## Planned For V1
 
-An Inno Setup installer script is provided in:
-
-```text
-packaging/installer/BybitTradeJournal.iss
-```
-
-Expected flow:
-
-1. build the app with PyInstaller
-2. open the `.iss` file in Inno Setup
-3. compile the installer
-
-The generated installer is configured to:
-
-- install the packaged desktop app into `Program Files`
-- create Start Menu and Desktop shortcuts
-- keep user data outside the install folder
-- warn when WebView2 is missing before first launch
+- installer-based Windows distribution instead of a raw zip
+- a smoother first-run flow for prerequisites like WebView2
+- less friction around downloaded file blocking on Windows
 
 ## Tests
 
@@ -237,13 +265,21 @@ Check compilation:
 .\.venv\Scripts\python.exe -m compileall bybit_journal/src bybit_journal/tests bybit_journal/desktop
 ```
 
+## GitHub Release Notes
+
+For a clean GitHub release:
+
+- share the packaged `dist/BybitTradeJournal/` folder or an installer
+- current public sharing flow is still zip-based
+- do not commit `.venv`, local `.env`, runtime databases, logs, exports, or dev notes
+- do not share your personal Bybit API keys or your local journal database
+
 ## Current Limitations
 
 - the application is currently focused on local Windows desktop usage
-- the Inno Setup installer script is ready, but the installer must still be compiled on a machine with Inno Setup installed
-- the `DEV TEST ONLY` button is still present for development convenience
+- distribution is still zip-based for now
+- unsigned builds can still trigger SmartScreen or download blocking on some Windows machines
 
 ## Note
 
-This is a personal trading journal project for organizational and educational use.
-It is not affiliated with Bybit.
+This is a personal trading journal project for organizational and educational use. It is not affiliated with Bybit.
