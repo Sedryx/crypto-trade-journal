@@ -37,7 +37,9 @@ class TemporaryDbTestCase(unittest.TestCase):
         self.temp_config_dir = self.temp_dir / "config"
         self.temp_data_dir = self.temp_dir / "data"
         self.temp_exports_dir = self.temp_dir / "exports"
+        self.temp_backups_dir = self.temp_dir / "backups"
         self.temp_env_path = self.temp_config_dir / ".env"
+        self.temp_settings_path = self.temp_config_dir / "settings.json"
 
         # Patch the runtime DB path so each test writes into its own temp file.
         self.db_path_patcher = patch.object(db, "DB_PATH", self.temp_db_path)
@@ -47,7 +49,9 @@ class TemporaryDbTestCase(unittest.TestCase):
         self.config_dir_patcher = patch.object(config, "USER_CONFIG_DIR", self.temp_config_dir)
         self.data_dir_patcher = patch.object(config, "USER_DATA_DIR", self.temp_data_dir)
         self.exports_dir_patcher = patch.object(config, "EXPORTS_DIR", self.temp_exports_dir)
+        self.backups_dir_patcher = patch.object(config, "BACKUPS_DIR", self.temp_backups_dir)
         self.env_path_patcher = patch.object(config, "ENV_PATH", self.temp_env_path)
+        self.settings_path_patcher = patch.object(config, "SETTINGS_PATH", self.temp_settings_path)
         self.db_runtime_path_patcher = patch.object(config, "DB_PATH", self.temp_db_path)
         self.legacy_env_patcher = patch.object(config, "LEGACY_ENV_PATH", self.temp_dir / "legacy.env")
         self.log_runtime_path_patcher = patch.object(config, "LOG_PATH", self.temp_data_dir / "log")
@@ -60,7 +64,9 @@ class TemporaryDbTestCase(unittest.TestCase):
         self.config_dir_patcher.start()
         self.data_dir_patcher.start()
         self.exports_dir_patcher.start()
+        self.backups_dir_patcher.start()
         self.env_path_patcher.start()
+        self.settings_path_patcher.start()
         self.db_runtime_path_patcher.start()
         self.log_runtime_path_patcher.start()
         self.legacy_env_patcher.start()
@@ -77,6 +83,8 @@ class TemporaryDbTestCase(unittest.TestCase):
         self.log_runtime_path_patcher.stop()
         self.db_runtime_path_patcher.stop()
         self.env_path_patcher.stop()
+        self.settings_path_patcher.stop()
+        self.backups_dir_patcher.stop()
         self.exports_dir_patcher.stop()
         self.data_dir_patcher.stop()
         self.config_dir_patcher.stop()
@@ -115,6 +123,7 @@ class ConfigTests(unittest.TestCase):
         config_dir = temp_dir / "config"
         data_dir = temp_dir / "data"
         exports_dir = temp_dir / "exports"
+        backups_dir = temp_dir / "backups"
         env_path = config_dir / ".env"
 
         try:
@@ -122,7 +131,9 @@ class ConfigTests(unittest.TestCase):
                 patch.object(config, "USER_CONFIG_DIR", config_dir),
                 patch.object(config, "USER_DATA_DIR", data_dir),
                 patch.object(config, "EXPORTS_DIR", exports_dir),
+                patch.object(config, "BACKUPS_DIR", backups_dir),
                 patch.object(config, "ENV_PATH", env_path),
+                patch.object(config, "SETTINGS_PATH", config_dir / "settings.json"),
                 patch.object(config, "DB_PATH", data_dir / "journal.db"),
                 patch.object(config, "LOG_PATH", data_dir / "log"),
                 patch.object(config, "LEGACY_ENV_PATH", temp_dir / "missing.env"),
@@ -148,6 +159,7 @@ class ConfigTests(unittest.TestCase):
         new_config_dir = temp_dir / "config"
         new_data_dir = temp_dir / "data"
         new_exports_dir = temp_dir / "exports"
+        new_backups_dir = temp_dir / "backups"
         new_env_path = new_config_dir / ".env"
         new_db_path = new_data_dir / "journal.db"
         legacy_env_path.write_text("BYBIT_API_KEY=old\nBYBIT_API_SECRET=secret\n", encoding="utf-8")
@@ -158,7 +170,9 @@ class ConfigTests(unittest.TestCase):
                 patch.object(config, "USER_CONFIG_DIR", new_config_dir),
                 patch.object(config, "USER_DATA_DIR", new_data_dir),
                 patch.object(config, "EXPORTS_DIR", new_exports_dir),
+                patch.object(config, "BACKUPS_DIR", new_backups_dir),
                 patch.object(config, "ENV_PATH", new_env_path),
+                patch.object(config, "SETTINGS_PATH", new_config_dir / "settings.json"),
                 patch.object(config, "DB_PATH", new_db_path),
                 patch.object(config, "LOG_PATH", new_data_dir / "log"),
                 patch.object(config, "LEGACY_EXPORTS_DIR", temp_dir / "missing_exports"),
@@ -274,9 +288,10 @@ class ServiceTests(TemporaryDbTestCase):
             status = journal_service.get_api_status_data()
 
         self.assertFalse(status["has_credentials"])
-        self.assertIn("incomplete", status["message"])
+        self.assertIn("missing", status["message"].lower())
         self.assertIn("db_path", status)
         self.assertIn("exports_dir", status)
+        self.assertIn("dev_mode", status)
 
     def test_sync_bybit_trades_data_returns_structured_summary(self) -> None:
         # One mocked call per Bybit category: linear, spot, inverse, option.
@@ -385,6 +400,7 @@ class ServiceTests(TemporaryDbTestCase):
         config_dir = temp_dir / "config"
         data_dir = temp_dir / "data"
         exports_dir = temp_dir / "exports"
+        backups_dir = temp_dir / "backups"
         env_path = config_dir / ".env"
 
         try:
@@ -392,7 +408,9 @@ class ServiceTests(TemporaryDbTestCase):
                 patch.object(config, "USER_CONFIG_DIR", config_dir),
                 patch.object(config, "USER_DATA_DIR", data_dir),
                 patch.object(config, "EXPORTS_DIR", exports_dir),
+                patch.object(config, "BACKUPS_DIR", backups_dir),
                 patch.object(config, "ENV_PATH", env_path),
+                patch.object(config, "SETTINGS_PATH", config_dir / "settings.json"),
                 patch.object(config, "DB_PATH", data_dir / "journal.db"),
                 patch.object(config, "LOG_PATH", data_dir / "log"),
                 patch.object(config, "LEGACY_ENV_PATH", temp_dir / "missing.env"),
@@ -448,6 +466,51 @@ class ServiceTests(TemporaryDbTestCase):
         self.assertTrue(result["deleted"])
         self.assertEqual(result["trade_id"], trade.id)
         self.assertEqual(len(db.get_all_trades()), 0)
+
+    def test_get_trade_detail_and_update_trade_journal_data(self) -> None:
+        self.insert_trade(bybit_trade_id="A", symbol="ETHUSDT", pnl=4.5)
+        trade = db.get_all_trades()[0]
+
+        detail = journal_service.get_trade_detail_data(trade.id)
+        update = journal_service.update_trade_journal_data(trade.id, "My note", r"C:\shots\trade.png")
+
+        self.assertEqual(detail["symbol"], "ETHUSDT")
+        self.assertTrue(update["updated"])
+        self.assertEqual(update["trade"]["note"], "My note")
+        self.assertEqual(update["trade"]["screenshot_path"], r"C:\shots\trade.png")
+
+    def test_save_app_settings_persists_sync_preferences(self) -> None:
+        settings = journal_service.save_app_settings(auto_sync_on_startup=False, default_sync_days=21)
+        reloaded = journal_service.load_app_settings()
+
+        self.assertFalse(settings["auto_sync_on_startup"])
+        self.assertEqual(settings["default_sync_days"], 21)
+        self.assertEqual(reloaded["default_sync_days"], 21)
+        self.assertFalse(reloaded["auto_sync_on_startup"])
+
+    def test_open_runtime_folder_returns_opened_path(self) -> None:
+        startfile = getattr(journal_service.os, "startfile", None)
+        if startfile is None:
+            self.skipTest("Windows-only startfile helper.")
+
+        with patch.object(journal_service.os, "startfile") as mocked:
+            result = journal_service.open_runtime_folder("exports")
+
+        self.assertTrue(result["opened"])
+        self.assertEqual(result["target"], "exports")
+        mocked.assert_called_once()
+
+    def test_create_and_restore_database_backup(self) -> None:
+        self.insert_trade(bybit_trade_id="A")
+
+        backup = journal_service.create_database_backup()
+        db.delete_trade_by_id(db.get_all_trades()[0].id)
+        restore = journal_service.restore_database_backup(backup["path"])
+
+        self.assertTrue(backup["created"])
+        self.assertTrue(Path(backup["path"]).exists())
+        self.assertTrue(restore["restored"])
+        self.assertEqual(len(db.get_all_trades()), 1)
 
 
 class SyncTests(unittest.TestCase):

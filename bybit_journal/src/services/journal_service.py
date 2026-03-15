@@ -1,5 +1,8 @@
 """Service layer shared by the desktop bridge and the rest of the backend."""
 
+import json
+import os
+import shutil
 import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
@@ -7,7 +10,15 @@ from pathlib import Path
 
 import config
 from api import get_wallet_balance
-from db import delete_trade_by_id, get_trade_stats, init_db, insert_trade, query_trades
+from db import (
+    delete_trade_by_id,
+    get_trade_by_id,
+    get_trade_stats,
+    init_db,
+    insert_trade,
+    query_trades,
+    update_trade_journal_fields,
+)
 from models import Trade
 import requests
 from sync import sync_executions_from_category
@@ -18,6 +29,17 @@ ECB_DAILY_RATES_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily
 SUPPORTED_DISPLAY_CURRENCIES = ("USD", "JPY", "GBP", "CHF", "EUR")
 STABLECOIN_PREFIXES = ("USD",)
 STABLECOIN_TICKERS = {"USDT", "USDC", "USDE", "DAI", "FDUSD", "TUSD"}
+FX_CACHE_TTL_SECONDS = 6 * 60 * 60
+
+_fx_cache = {
+    "fetched_at": 0.0,
+    "rates": None,
+}
+
+DEFAULT_APP_SETTINGS = {
+    "auto_sync_on_startup": True,
+    "default_sync_days": 7,
+}
 
 
 def initialize_runtime() -> None:
@@ -49,18 +71,56 @@ def _trade_to_dict(trade) -> dict:
     }
 
 
+def _coerce_sync_days(value) -> int:
+    """Normalize sync day input into a safe integer value."""
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        parsed = DEFAULT_APP_SETTINGS["default_sync_days"]
+    return max(parsed, 1)
+
+
+def load_app_settings() -> dict:
+    """Load persisted app settings with defaults."""
+    config.ensure_directories()
+    if not config.SETTINGS_PATH.exists():
+        return DEFAULT_APP_SETTINGS.copy()
+
+    try:
+        payload = json.loads(config.SETTINGS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return DEFAULT_APP_SETTINGS.copy()
+
+    return {
+        "auto_sync_on_startup": bool(payload.get("auto_sync_on_startup", True)),
+        "default_sync_days": _coerce_sync_days(payload.get("default_sync_days")),
+    }
+
+
+def save_app_settings(auto_sync_on_startup: bool, default_sync_days: int) -> dict:
+    """Persist app settings used by the desktop shell."""
+    config.ensure_directories()
+    payload = {
+        "auto_sync_on_startup": bool(auto_sync_on_startup),
+        "default_sync_days": _coerce_sync_days(default_sync_days),
+    }
+    config.SETTINGS_PATH.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return payload
+
+
 def get_api_status_data() -> dict:
     """Return the current API configuration state for the desktop UI."""
     has_credentials = config.has_api_credentials()
+    runtime_paths = config.get_runtime_paths()
     return {
         "has_credentials": has_credentials,
-        "env_path": str(config.ENV_PATH),
-        "db_path": str(config.DB_PATH),
-        "exports_dir": str(config.EXPORTS_DIR),
+        "dev_mode": config.DEV_MODE,
+        "settings": load_app_settings(),
+        **runtime_paths,
         "message": (
-            "Configuration API : OK"
+            "API configured"
             if has_credentials
-            else "Configuration API : incomplete (.env vide ou non renseigne)"
+            else "API keys missing"
         ),
     }
 
@@ -107,7 +167,7 @@ def _build_excel_workbook(trades: list[dict], stats: dict, exported_at: str):
         from openpyxl.styles import Alignment, Font, PatternFill
     except ImportError as error:
         raise RuntimeError(
-            "Export Excel indisponible: installe openpyxl dans le venv du projet."
+            "Excel export unavailable: install openpyxl in the project venv."
         ) from error
 
     workbook = Workbook()
@@ -211,12 +271,27 @@ def get_trade_stats_data(
         start_time=start_time,
         end_time=end_time,
     )
+    recent_trades = query_trades(
+        symbol=symbol,
+        side=side,
+        start_time=start_time,
+        end_time=end_time,
+        limit=12,
+    )
     stats["filters"] = {
         "symbol": symbol,
         "side": side,
         "start_time": start_time,
         "end_time": end_time,
     }
+    stats["chart_points"] = [
+        {
+            "label": (trade.trade_time or "")[5:16] or trade.symbol,
+            "pnl": trade.pnl,
+            "symbol": trade.symbol,
+        }
+        for trade in reversed(recent_trades)
+    ]
     return stats
 
 
@@ -227,7 +302,7 @@ def get_dashboard_data() -> dict:
     api_status = get_api_status_data()
     wallet = get_wallet_summary() if api_status["has_credentials"] else {
         "success": False,
-        "error": "Configuration API requise.",
+        "error": "API configuration required.",
         "account": None,
         "non_zero_balances": [],
     }
@@ -238,6 +313,34 @@ def get_dashboard_data() -> dict:
         "wallet": wallet,
         "recent_trades": recent_trades["trades"],
         "recent_trade_count": recent_trades["count"],
+    }
+
+
+def get_trade_detail_data(trade_id: int) -> dict:
+    """Return one full trade payload for the detail view."""
+    trade = get_trade_by_id(trade_id)
+    if not trade:
+        raise ValueError(f"Trade not found: id={trade_id}")
+
+    payload = _trade_to_dict(trade)
+    payload["has_note"] = bool((trade.note or "").strip())
+    payload["has_screenshot_path"] = bool((trade.screenshot_path or "").strip())
+    return payload
+
+
+def update_trade_journal_data(trade_id: int, note: str | None, screenshot_path: str | None) -> dict:
+    """Save the editable journal fields for a trade."""
+    updated = update_trade_journal_fields(
+        trade_id=trade_id,
+        note=(note or "").strip() or None,
+        screenshot_path=(screenshot_path or "").strip() or None,
+    )
+    if not updated:
+        raise ValueError(f"Trade not found: id={trade_id}")
+
+    return {
+        "updated": True,
+        "trade": get_trade_detail_data(trade_id),
     }
 
 
@@ -287,11 +390,72 @@ def delete_trade_data(trade_id: int) -> dict:
     """Delete one stored trade and return a small UI-friendly summary."""
     deleted = delete_trade_by_id(trade_id)
     if not deleted:
-        raise ValueError(f"Trade introuvable pour suppression: id={trade_id}")
+        raise ValueError(f"Trade not found: id={trade_id}")
 
     return {
         "deleted": True,
         "trade_id": trade_id,
+    }
+
+
+def open_runtime_folder(target: str) -> dict:
+    """Open one user-facing runtime folder in the system file explorer."""
+    runtime_paths = config.get_runtime_paths()
+    folder_map = {
+        "config": Path(runtime_paths["config_dir"]),
+        "data": Path(runtime_paths["data_dir"]),
+        "exports": Path(runtime_paths["exports_dir"]),
+        "backups": Path(runtime_paths["backups_dir"]),
+    }
+    if target not in folder_map:
+        raise ValueError(f"Unknown folder target: {target}")
+
+    path = folder_map[target]
+    path.mkdir(parents=True, exist_ok=True)
+
+    if os.name == "nt":
+        os.startfile(path)  # type: ignore[attr-defined]
+    else:
+        raise RuntimeError("Folder opening is only supported on Windows.")
+
+    return {
+        "opened": True,
+        "target": target,
+        "path": str(path),
+    }
+
+
+def create_database_backup() -> dict:
+    """Create a timestamped copy of the SQLite database."""
+    config.ensure_directories()
+    if not config.DB_PATH.exists():
+        raise RuntimeError("Database file not found.")
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_path = config.BACKUPS_DIR / f"journal_backup_{timestamp}.db"
+    shutil.copy2(config.DB_PATH, backup_path)
+    return {
+        "created": True,
+        "path": str(backup_path),
+        "filename": backup_path.name,
+    }
+
+
+def restore_database_backup(backup_path: str) -> dict:
+    """Restore the active database from a provided backup file."""
+    source = Path(backup_path).expanduser()
+    if not source.exists():
+        raise ValueError("Backup file not found.")
+    if source.suffix.lower() not in {".db", ".sqlite", ".sqlite3"}:
+        raise ValueError("Unsupported backup file.")
+
+    config.ensure_directories()
+    shutil.copy2(source, config.DB_PATH)
+    init_db()
+    return {
+        "restored": True,
+        "path": str(source),
+        "db_path": str(config.DB_PATH),
     }
 
 
@@ -302,7 +466,7 @@ def get_wallet_summary(wallet: dict | None = None) -> dict:
     if wallet_data.get("retCode") != 0:
         return {
             "success": False,
-            "error": wallet_data.get("retMsg") or "Erreur inconnue Bybit.",
+            "error": wallet_data.get("retMsg") or "Unknown Bybit error.",
             "account": None,
             "non_zero_balances": [],
         }
@@ -311,7 +475,7 @@ def get_wallet_summary(wallet: dict | None = None) -> dict:
     if not accounts:
         return {
             "success": False,
-            "error": "Aucun compte retourne par l'API.",
+            "error": "No account returned by the API.",
             "account": None,
             "non_zero_balances": [],
         }
@@ -357,6 +521,9 @@ def get_wallet_summary(wallet: dict | None = None) -> dict:
 
 def _get_usd_conversion_rates() -> dict:
     """Fetch display-currency conversion rates based on ECB daily FX data."""
+    if _fx_cache["rates"] and (time.time() - _fx_cache["fetched_at"]) < FX_CACHE_TTL_SECONDS:
+        return _fx_cache["rates"]
+
     rates_per_eur = {"EUR": 1.0}
 
     try:
@@ -369,6 +536,8 @@ def _get_usd_conversion_rates() -> dict:
             if currency and rate:
                 rates_per_eur[currency] = float(rate)
     except (requests.RequestException, ET.ParseError, ValueError):
+        if _fx_cache["rates"]:
+            return _fx_cache["rates"]
         return {
             "USD": 1.0,
             "JPY": 0.0,
@@ -379,6 +548,8 @@ def _get_usd_conversion_rates() -> dict:
 
     usd_per_eur = rates_per_eur.get("USD")
     if not usd_per_eur:
+        if _fx_cache["rates"]:
+            return _fx_cache["rates"]
         return {
             "USD": 1.0,
             "JPY": 0.0,
@@ -398,6 +569,8 @@ def _get_usd_conversion_rates() -> dict:
         target_per_eur = rates_per_eur.get(currency)
         usd_rates[currency] = (target_per_eur / usd_per_eur) if target_per_eur else 0.0
 
+    _fx_cache["fetched_at"] = time.time()
+    _fx_cache["rates"] = usd_rates
     return usd_rates
 
 
@@ -420,7 +593,8 @@ def _build_sync_ranges(days: int, now_ms: int | None = None) -> list[tuple[int, 
 
 def sync_bybit_trades_data(days: int = 30, now_ms: int | None = None) -> dict:
     """Synchronize Bybit executions category by category and summarize the result."""
-    sync_ranges = _build_sync_ranges(days=days, now_ms=now_ms)
+    effective_days = _coerce_sync_days(days)
+    sync_ranges = _build_sync_ranges(days=effective_days, now_ms=now_ms)
     first_start, last_end = sync_ranges[0][0], sync_ranges[-1][1]
 
     per_category = []
@@ -448,7 +622,7 @@ def sync_bybit_trades_data(days: int = 30, now_ms: int | None = None) -> dict:
         )
 
     return {
-        "days": days,
+        "days": effective_days,
         "start_time_ms": first_start,
         "end_time_ms": last_end,
         "range_count": len(sync_ranges),
@@ -521,5 +695,5 @@ def seed_dev_test_trades(count: int = 20) -> dict:
     return {
         "requested": count,
         "inserted": inserted,
-        "message": f"{inserted} trade(s) de dev insere(s).",
+        "message": f"{inserted} dev trade(s) inserted.",
     }

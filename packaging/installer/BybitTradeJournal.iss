@@ -2,6 +2,7 @@
 #define MyAppVersion "0.1.0"
 #define MyAppPublisher "Joach"
 #define MyAppExeName "BybitTradeJournal.exe"
+#define MyAppIcon "..\..\bybit_journal\frontend\asset\icon.ico"
 
 [Setup]
 AppId={{2A4B53E3-9A31-4B70-A7ED-5C7C4A9E4F44}
@@ -17,13 +18,15 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=lowest
+SetupIconFile={#MyAppIcon}
+UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Files]
 Source: "..\..\dist\BybitTradeJournal\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\Bybit Trade Journal"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\Bybit Trade Journal"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\Bybit Trade Journal"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
+Name: "{autodesktop}\Bybit Trade Journal"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch Bybit Trade Journal"; Flags: nowait postinstall skipifsilent

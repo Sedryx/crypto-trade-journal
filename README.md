@@ -23,9 +23,14 @@ The application is built around:
 - display of `Total equity`, stablecoins, and other assets
 - wallet display currency switcher (`USD`, `JPY`, `GBP`, `CHF`, `EUR`)
 - filtered trade list
+- trade detail panel with note and screenshot path editing
 - basic trading statistics
+- chart view based on recent trade PnL
 - Excel export for filtered trades
-- development button to inject test trades
+- storage helpers to open config, data, and export folders
+- sync preferences for startup auto-sync and default sync days
+- SQLite backup and restore helpers
+- development tools hidden outside dev mode
 - PyInstaller build spec for Windows
 - WebView2 prerequisite check
 - Inno Setup installer script
@@ -133,10 +138,10 @@ python bybit_journal/desktop/main.py
 ## Main Screens
 
 - `Dashboard`: API status, wallet, account summary, and recent trades
-- `Trades`: filters, SQLite trade table, Excel export, and export summary
-- `Synchronization`: Bybit import over a selected day range
-- `Statistics`: PnL, win rate, and global indicators
-- `Configuration`: `.env` management and `DEV TEST ONLY` button
+- `Trades`: filters, SQLite trade table, trade detail panel, notes, and Excel export
+- `Synchronization`: Bybit import plus sync preferences
+- `Statistics`: PnL, win rate, indicators, and a recent PnL chart
+- `Configuration`: `.env` management, storage shortcuts, and backup tools
 
 ## Excel Export
 
@@ -159,6 +164,13 @@ At launch:
 - legacy `.env`, SQLite, log, and export files are migrated if needed
 - the frontend loads the dashboard, trades, and statistics
 - if the Bybit API is configured, an automatic synchronization starts after 1 second
+
+## UX Notes
+
+- the packaged app is intended to use `%APPDATA%` and `%Documents%` as the real runtime storage
+- deletion from the trades table requires confirmation
+- the settings screen can open the active config, data, and export folders
+- the `DEV TEST ONLY` action is shown only in dev mode
 
 ## Windows Build
 

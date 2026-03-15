@@ -12,4 +12,10 @@ if ($Clean) {
     Remove-Item -Recurse -Force (Join-Path $projectRoot "dist") -ErrorAction SilentlyContinue
 }
 
-& $python -m PyInstaller --noconfirm $spec
+Push-Location $projectRoot
+try {
+    & $python -m PyInstaller --noconfirm $spec
+}
+finally {
+    Pop-Location
+}

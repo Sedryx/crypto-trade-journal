@@ -4,64 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bybit Trade Journal</title>
+  <link rel="icon" type="image/x-icon" href="./asset/icon.ico">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <!-- Desktop shell: sidebar navigation + data views driven by PyWebView. -->
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="sidebar-top">
-        <div class="brand">
-          <p class="brand-kicker">Bybit Journal</p>
-          <h1>Bybit Trade Journal</h1>
-          <p class="brand-copy">
-            Journal desktop local pour suivre les trades, la synchronisation Bybit et l'etat du compte.
-          </p>
-        </div>
-
-        <nav class="sidebar-nav">
-        <button class="nav-link is-active" data-view="dashboard">
-          <span class="nav-link-title">Dashboard</span>
-          <span class="nav-link-copy">Compte, wallet et resume</span>
-        </button>
-        <button class="nav-link" data-view="trades">
-          <span class="nav-link-title">Trades</span>
-          <span class="nav-link-copy">Liste, filtres et details</span>
-        </button>
-        <button class="nav-link" data-view="sync">
-          <span class="nav-link-title">Synchronisation</span>
-          <span class="nav-link-copy">Import Bybit et progression</span>
-        </button>
-        <button class="nav-link" data-view="stats">
-          <span class="nav-link-title">Statistiques</span>
-          <span class="nav-link-copy">Performance et indicateurs</span>
-        </button>
-        <button class="nav-link" data-view="settings">
-          <span class="nav-link-title">Configuration</span>
-          <span class="nav-link-copy">API, stockage et options</span>
-        </button>
-        </nav>
+      <div class="brand">
+        <p class="brand-mark">BTJ</p>
+        <h1>Bybit Trade Journal</h1>
       </div>
 
+      <nav class="sidebar-nav">
+        <button class="nav-link is-active" data-view="dashboard">Dashboard</button>
+        <button class="nav-link" data-view="trades">Trades</button>
+        <button class="nav-link" data-view="sync">Sync</button>
+        <button class="nav-link" data-view="stats">Stats</button>
+        <button class="nav-link" data-view="settings">Settings</button>
+      </nav>
+
       <div class="status-panel">
-        <p class="status-label">Etat actuel</p>
-        <p class="status-value" id="sidebar-status-value">Connexion en attente</p>
-        <p class="status-copy" id="sidebar-status-copy">
-          Le shell desktop est pret. Le frontend va charger les donnees Python au demarrage.
-        </p>
+        <p class="status-label">Status</p>
+        <p class="status-value" id="sidebar-status-value">Waiting</p>
+        <p class="status-copy" id="sidebar-status-copy">Not ready.</p>
       </div>
     </aside>
 
     <main class="content">
       <header class="topbar">
-        <div>
+        <div class="topbar-main">
           <p class="eyebrow" id="view-kicker">Dashboard</p>
-          <h2 id="view-title">Vue d'ensemble du journal</h2>
+          <h2 id="view-title">Overview</h2>
         </div>
 
         <div class="topbar-actions">
           <label class="currency-picker">
-            <span>Devise wallet</span>
             <select id="wallet-currency-select">
               <option value="USD">USD</option>
               <option value="JPY">JPY</option>
@@ -70,64 +47,47 @@
               <option value="EUR">EUR</option>
             </select>
           </label>
-          <span class="status-chip" id="topbar-last-sync">Derniere sync : en attente</span>
-          <button class="primary-button" id="reload-dashboard-button">Rafraichir le dashboard</button>
+          <span class="status-chip" id="topbar-last-sync">Sync waiting</span>
+          <button class="primary-button" id="reload-dashboard-button">Refresh</button>
         </div>
       </header>
 
       <section class="banner" id="app-banner">
-        <strong id="app-banner-title">Interface initialisee</strong>
-        <span id="app-banner-copy">Chargement des donnees depuis le bridge Python...</span>
+        <strong id="app-banner-title">Initializing</strong>
+        <span id="app-banner-copy">Loading...</span>
       </section>
 
       <section class="view" id="view-dashboard">
-        <section class="hero">
-          <div class="hero-copy">
-            <p class="eyebrow">Vue generale</p>
-            <h3>Pilotage rapide du journal de trading</h3>
-            <p>
-              Cette vue regroupe les informations utiles du compte Bybit, les indicateurs du journal
-              et les dernieres lignes synchronisees.
-            </p>
-          </div>
-
-          <div class="hero-spotlight">
-            <p class="spotlight-label">Statut API</p>
-            <p class="spotlight-value" id="dashboard-api-status">Verification...</p>
-            <p class="spotlight-copy" id="dashboard-api-copy">Lecture des credentials en cours.</p>
-          </div>
-        </section>
-
         <section class="metric-grid">
           <article class="metric-card">
-            <p class="card-label">Trades stockes</p>
-            <p class="metric-value" id="metric-total-trades">0</p>
-            <p class="metric-copy">Nombre total de trades lus depuis SQLite.</p>
+            <p class="card-label">API</p>
+            <p class="metric-value metric-status" id="dashboard-api-status">-</p>
+            <p class="metric-subtle" id="dashboard-api-copy">-</p>
           </article>
           <article class="metric-card">
-            <p class="card-label">PnL total</p>
+            <p class="card-label">Trades</p>
+            <p class="metric-value" id="metric-total-trades">0</p>
+          </article>
+          <article class="metric-card">
+            <p class="card-label">PnL</p>
             <p class="metric-value" id="metric-total-pnl">0.00</p>
-            <p class="metric-copy">Valeur renvoyee par les statistiques backend.</p>
           </article>
           <article class="metric-card">
             <p class="card-label">Win rate</p>
             <p class="metric-value" id="metric-win-rate">0%</p>
-            <p class="metric-copy">Metrique de synthese issue des stats SQL.</p>
-          </article>
-          <article class="metric-card">
-            <p class="card-label">Derniers trades</p>
-            <p class="metric-value" id="metric-recent-count">0</p>
-            <p class="metric-copy">Resume du bloc "trades recents".</p>
           </article>
         </section>
 
-        <section class="split-layout">
+        <section class="panel action-strip">
+          <button class="ghost-button inline-panel-button" id="dashboard-open-trades-button">Trades</button>
+          <button class="ghost-button inline-panel-button" id="dashboard-open-sync-button">Sync</button>
+          <button class="ghost-button inline-panel-button" id="dashboard-open-settings-button">API</button>
+        </section>
+
+        <section class="dashboard-grid">
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Portefeuille</p>
-                <h3>Argent du compte Bybit</h3>
-              </div>
+              <h3>Wallet</h3>
             </div>
             <div class="wallet-grid">
               <div class="wallet-stat">
@@ -135,112 +95,63 @@
                 <strong class="wallet-value" id="wallet-total-equity">-</strong>
               </div>
               <div class="wallet-stat">
-                <span class="wallet-label">Stables (USDT / USDC / ...)</span>
+                <span class="wallet-label">Stables</span>
                 <strong class="wallet-value" id="wallet-stable-total">-</strong>
               </div>
             </div>
-            <div class="panel-subsection">
-              <p class="eyebrow">Stables detectes</p>
+            <div class="wallet-section">
+              <p class="section-label">Stables</p>
               <div class="compact-list" id="wallet-stable-list">
                 <div class="compact-item">
-                  <p class="compact-title">Aucun stable charge</p>
-                  <p class="compact-copy">Les stablecoins du compte apparaitront ici.</p>
+                  <p class="compact-title">Aucun resultat</p>
                 </div>
               </div>
             </div>
-            <div class="panel-subsection">
-              <p class="eyebrow">Autres actifs</p>
-            <div class="compact-list" id="wallet-balance-list">
-              <div class="compact-item">
-                <p class="compact-title">Aucun solde charge</p>
-                <p class="compact-copy">Le portefeuille complet sera affiche ici si l'API repond correctement.</p>
+            <div class="wallet-section">
+              <p class="section-label">Autres actifs</p>
+              <div class="compact-list" id="wallet-balance-list">
+                <div class="compact-item">
+                  <p class="compact-title">Aucun resultat</p>
+                </div>
               </div>
-            </div>
             </div>
           </article>
 
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Actions rapides</p>
-                <h3>Demarrage rapide</h3>
-              </div>
+              <h3>Recent trades</h3>
+              <p class="panel-meta" id="metric-recent-count">0</p>
             </div>
-            <div class="timeline">
-              <div class="timeline-item">
-                <span class="timeline-index">01</span>
-                <div>
-                  <p class="timeline-title">Verifier les trades</p>
-                  <p class="timeline-copy">Ouvre directement la liste avec les derniers trades enregistres dans SQLite.</p>
-                  <button class="ghost-button inline-panel-button" id="dashboard-open-trades-button">Ouvrir les trades</button>
-                </div>
-              </div>
-              <div class="timeline-item">
-                <span class="timeline-index">02</span>
-                <div>
-                  <p class="timeline-title">Relancer une synchronisation</p>
-                  <p class="timeline-copy">Importe les executions Bybit sur la periode definie dans l'ecran de sync.</p>
-                  <button class="ghost-button inline-panel-button" id="dashboard-open-sync-button">Aller a la synchronisation</button>
-                </div>
-              </div>
-              <div class="timeline-item">
-                <span class="timeline-index">03</span>
-                <div>
-                  <p class="timeline-title">Configurer l'API</p>
-                  <p class="timeline-copy">Ajoute ou modifie les cles Bybit si le compte n'est pas encore relie.</p>
-                  <button class="ghost-button inline-panel-button" id="dashboard-open-settings-button">Ouvrir la configuration</button>
-                </div>
-              </div>
-            </div>
+            <div class="compact-list" id="dashboard-recent-trades"></div>
           </article>
-        </section>
-
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Trades recents</p>
-              <h3>Dernieres lignes chargees</h3>
-            </div>
-          </div>
-          <div class="compact-list" id="dashboard-recent-trades"></div>
         </section>
       </section>
 
       <section class="view is-hidden" id="view-trades">
         <div class="view-intro">
-          <div>
-            <p class="eyebrow">Trades</p>
-            <h3>Vue liste + filtres</h3>
-          </div>
+          <h3>Trades</h3>
           <div class="inline-actions">
-            <button class="ghost-button" id="export-trades-button">Exporter en Excel</button>
-            <button class="primary-button" id="load-trades-button">Charger les trades</button>
+            <button class="ghost-button" id="export-trades-button">Excel</button>
+            <button class="primary-button" id="load-trades-button">Load</button>
           </div>
         </div>
 
         <section class="panel">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Filtres</p>
-              <h3>Recherche reelle</h3>
-            </div>
-          </div>
-
           <div class="filters-grid">
             <label class="field">
-              <span>Symbole</span>
+              <span>Symbol</span>
               <input type="text" id="filter-symbol" placeholder="BTCUSDT">
             </label>
             <label class="field">
               <span>Side</span>
-              <input type="text" id="filter-side" placeholder="Buy ou Sell">
+              <input type="text" id="filter-side" placeholder="Buy / Sell">
             </label>
             <label class="field">
-              <span>Date debut</span>
+              <span>Start</span>
               <input type="text" id="filter-start" placeholder="2026-03-01">
             </label>
             <label class="field">
-              <span>Date fin</span>
+              <span>End</span>
               <input type="text" id="filter-end" placeholder="2026-03-31">
             </label>
             <label class="field">
@@ -256,13 +167,9 @@
 
         <section class="panel">
           <div class="panel-header">
-            <div>
-              <p class="eyebrow">Apercu</p>
-              <h3>Table de trades</h3>
-            </div>
-            <p class="panel-meta" id="trade-count-label">0 trade charge</p>
+            <h3>Results</h3>
+            <p class="panel-meta" id="trade-count-label">0</p>
           </div>
-
           <div class="table-shell">
             <table class="trade-table">
               <thead>
@@ -274,7 +181,7 @@
                   <th>Qty</th>
                   <th>PnL</th>
                   <th>Date</th>
-                  <th>Action</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="trade-table-body"></tbody>
@@ -282,31 +189,41 @@
           </div>
         </section>
 
-        <section class="panel export-panel">
+        <section class="panel" id="trade-detail-panel">
           <div class="panel-header">
-            <div>
-              <p class="eyebrow">Export</p>
-              <h3>Sortie Excel</h3>
+            <h3>Trade detail</h3>
+            <p class="panel-meta" id="trade-detail-id">No trade selected</p>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-list" id="trade-detail-fields">
+              <div class="setting-row">
+                <span>Status</span>
+                <strong class="badge neutral">Select a trade</strong>
+              </div>
+            </div>
+            <div class="settings-form">
+              <label class="field">
+                <span>Note</span>
+                <textarea id="trade-note-input" rows="5" placeholder="Add your review"></textarea>
+              </label>
+              <label class="field">
+                <span>Screenshot path</span>
+                <input type="text" id="trade-screenshot-input" placeholder="C:\Screens\trade.png">
+              </label>
+              <div class="inline-actions">
+                <button class="primary-button" id="save-trade-journal-button">Save note</button>
+              </div>
             </div>
           </div>
-          <div class="export-helper-grid">
-            <div class="compact-item helper-item">
-              <p class="compact-title">Ce qui est exporte</p>
-              <p class="compact-copy">Les filtres actuels de cette page sont reutilises dans le fichier Excel.</p>
-            </div>
-            <div class="compact-item helper-item">
-              <p class="compact-title">Contenu du fichier</p>
-              <p class="compact-copy">Le classeur contient une feuille `Trades` et une feuille `Stats`.</p>
-            </div>
-            <div class="compact-item helper-item">
-              <p class="compact-title">Ou le trouver</p>
-              <p class="compact-copy">Le fichier `.xlsx` est cree dans le dossier local `bybit_journal/exports/`.</p>
-            </div>
+        </section>
+
+        <section class="panel export-panel">
+          <div class="panel-header">
+            <h3>Excel</h3>
           </div>
           <div class="compact-list" id="export-summary">
             <div class="compact-item">
-              <p class="compact-title">Aucun export lance</p>
-              <p class="compact-copy">Utilise les filtres ci-dessus puis clique sur "Exporter en Excel".</p>
+              <p class="compact-title">No export yet</p>
             </div>
           </div>
         </section>
@@ -314,42 +231,52 @@
 
       <section class="view is-hidden" id="view-sync">
         <div class="view-intro">
-          <div>
-            <p class="eyebrow">Synchronisation</p>
-            <h3>Pilotage de l'import Bybit</h3>
-          </div>
+          <h3>Sync</h3>
           <div class="inline-actions">
             <label class="field compact-field">
-              <span>Jours</span>
+              <span>Days</span>
               <input type="text" id="sync-days" value="7">
             </label>
-            <button class="primary-button" id="run-sync-button">Lancer la sync</button>
+            <button class="primary-button" id="run-sync-button">Run</button>
           </div>
         </div>
 
-        <section class="split-layout">
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Preferences</h3>
+          </div>
+          <div class="filters-grid">
+            <label class="field">
+              <span>Default days</span>
+              <input type="text" id="settings-default-sync-days" value="7">
+            </label>
+            <label class="field field-checkbox">
+              <span>Auto sync on startup</span>
+              <input type="checkbox" id="settings-auto-sync">
+            </label>
+            <div class="inline-actions sync-settings-actions">
+              <button class="ghost-button" id="save-sync-settings-button">Save preferences</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="sync-layout">
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Execution</p>
-                <h3>Resume d'import</h3>
-              </div>
+              <h3>Summary</h3>
             </div>
             <div class="sync-summary" id="sync-summary-list"></div>
           </article>
 
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Progression</p>
-                <h3>Etat courant</h3>
-              </div>
+              <h3>Progress</h3>
             </div>
             <div class="progress-shell">
               <div class="progress-bar">
                 <span id="sync-progress-bar" style="width: 0%"></span>
               </div>
-              <p class="progress-copy" id="sync-progress-copy">Aucune synchronisation lancee pour le moment.</p>
+              <p class="progress-copy" id="sync-progress-copy">Idle</p>
             </div>
           </article>
         </section>
@@ -357,118 +284,135 @@
 
       <section class="view is-hidden" id="view-stats">
         <div class="view-intro">
-          <div>
-            <p class="eyebrow">Statistiques</p>
-            <h3>Lecture analytique de la performance</h3>
-          </div>
-          <button class="ghost-button" id="reload-stats-button">Rafraichir les stats</button>
+          <h3>Stats</h3>
+          <button class="ghost-button" id="reload-stats-button">Refresh</button>
         </div>
 
         <section class="metric-grid">
           <article class="metric-card">
-            <p class="card-label">Meilleur trade</p>
+            <p class="card-label">Best</p>
             <p class="metric-value accent-positive" id="stats-best-trade">0.00</p>
-            <p class="metric-copy">Plus haut PnL stocke dans la base.</p>
           </article>
           <article class="metric-card">
-            <p class="card-label">Pire trade</p>
+            <p class="card-label">Worst</p>
             <p class="metric-value accent-negative" id="stats-worst-trade">0.00</p>
-            <p class="metric-copy">Plus basse execution presente en base.</p>
           </article>
           <article class="metric-card">
-            <p class="card-label">PnL moyen</p>
+            <p class="card-label">Average</p>
             <p class="metric-value" id="stats-average-pnl">0.00</p>
-            <p class="metric-copy">Valeur moyenne par trade.</p>
           </article>
           <article class="metric-card">
-            <p class="card-label">Montant investi</p>
+            <p class="card-label">Invested</p>
             <p class="metric-value" id="stats-invested">0.00</p>
-            <p class="metric-copy">Somme des montants investis enregistre.</p>
           </article>
         </section>
 
         <section class="panel">
           <div class="panel-header">
-            <div>
-              <p class="eyebrow">Repartition</p>
-              <h3>Vue synthese</h3>
-            </div>
+            <h3>Breakdown</h3>
           </div>
           <div class="insight-grid" id="stats-insight-grid"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Chart</h3>
+          </div>
+          <div class="chart-shell" id="stats-chart"></div>
         </section>
       </section>
 
       <section class="view is-hidden" id="view-settings">
         <div class="view-intro">
-          <div>
-            <p class="eyebrow">Configuration</p>
-            <h3>Panneau settings actif</h3>
-          </div>
-          <button class="ghost-button" id="reload-settings-button">Relire l'etat API</button>
+          <h3>Settings</h3>
+          <button class="ghost-button" id="reload-settings-button">Refresh</button>
         </div>
 
         <section class="settings-grid">
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Credentials</p>
-                <h3>API Bybit</h3>
-              </div>
+              <h3>Bybit API</h3>
             </div>
             <div class="settings-list">
               <div class="setting-row">
-                <span>Statut</span>
-                <strong class="badge neutral" id="settings-api-status">Inconnu</strong>
+                <span>Status</span>
+                <strong class="badge neutral" id="settings-api-status">-</strong>
               </div>
               <div class="setting-row">
-                <span>Fichier .env</span>
+                <span>.env</span>
                 <strong class="badge neutral" id="settings-env-path">-</strong>
               </div>
               <div class="setting-row">
-                <span>Base SQLite</span>
+                <span>Database</span>
                 <strong class="badge neutral" id="settings-db-path">-</strong>
               </div>
               <div class="setting-row">
-                <span>Dossier exports</span>
+                <span>Exports</span>
                 <strong class="badge neutral" id="settings-exports-path">-</strong>
               </div>
             </div>
 
             <div class="settings-form">
               <label class="field">
-                <span>BYBIT_API_KEY</span>
-                <input type="text" id="settings-api-key" placeholder="Entre la cle API">
+                <span>API key</span>
+                <input type="text" id="settings-api-key" placeholder="BYBIT_API_KEY">
               </label>
               <label class="field">
-                <span>BYBIT_API_SECRET</span>
-                <input type="password" id="settings-api-secret" placeholder="Entre le secret API">
+                <span>API secret</span>
+                <input type="password" id="settings-api-secret" placeholder="BYBIT_API_SECRET">
               </label>
               <div class="inline-actions">
-                <button class="primary-button" id="save-settings-button">Enregistrer la configuration</button>
-                <button class="ghost-button danger-button" id="seed-dev-trades-button">DEV TEST ONLY</button>
+                <button class="primary-button" id="save-settings-button">Save</button>
+                <button class="ghost-button danger-button is-hidden" id="seed-dev-trades-button" data-dev-only="true">DEV TEST ONLY</button>
               </div>
             </div>
           </article>
 
           <article class="panel">
             <div class="panel-header">
-              <div>
-                <p class="eyebrow">Fichiers</p>
-                <h3>Stockage utilisateur</h3>
-              </div>
+              <h3>Storage</h3>
             </div>
             <div class="settings-list">
               <div class="setting-row">
-                <span>Configuration</span>
-                <strong class="badge neutral">AppData Roaming</strong>
+                <span>Config</span>
+                <strong class="badge neutral">AppData</strong>
+              </div>
+              <div class="setting-row">
+                <span>Data</span>
+                <strong class="badge neutral">AppData</strong>
               </div>
               <div class="setting-row">
                 <span>Exports</span>
-                <strong class="badge neutral">Documents utilisateur</strong>
+                <strong class="badge neutral">Documents</strong>
               </div>
-              <div class="setting-row">
-                <span>Bridge desktop</span>
-                <strong class="badge success">Actif</strong>
+            </div>
+            <div class="inline-actions settings-actions">
+              <button class="ghost-button" id="open-config-folder-button">Open config</button>
+              <button class="ghost-button" id="open-data-folder-button">Open data</button>
+              <button class="ghost-button" id="open-exports-folder-button">Open exports</button>
+              <button class="ghost-button" id="open-backups-folder-button">Open backups</button>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Backup</h3>
+            </div>
+            <div class="inline-actions settings-actions">
+              <button class="primary-button" id="create-backup-button">Create backup</button>
+            </div>
+            <div class="settings-form">
+              <label class="field">
+                <span>Restore from backup path</span>
+                <input type="text" id="restore-backup-path" placeholder="C:\Users\...\journal_backup_20260314_120000.db">
+              </label>
+              <div class="inline-actions">
+                <button class="ghost-button danger-button" id="restore-backup-button">Restore backup</button>
+              </div>
+            </div>
+            <div class="compact-list" id="backup-summary">
+              <div class="compact-item">
+                <p class="compact-title">No backup action yet</p>
               </div>
             </div>
           </article>

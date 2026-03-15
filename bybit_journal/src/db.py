@@ -103,6 +103,56 @@ def delete_trade_by_id(trade_id: int) -> bool:
     return deleted
 
 
+def get_trade_by_id(trade_id: int) -> Trade | None:
+    """Return one trade by SQLite id, or None when it does not exist."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            id,
+            bybit_trade_id,
+            symbol,
+            side,
+            qty,
+            entry_price,
+            exit_price,
+            take_profit,
+            stop_loss,
+            leverage,
+            pnl,
+            invested_amount,
+            trade_time,
+            note,
+            screenshot_path
+        FROM trades
+        WHERE id = ?
+        """,
+        (trade_id,),
+    )
+    row = cursor.fetchone()
+    conn.close()
+    return _row_to_trade(row) if row else None
+
+
+def update_trade_journal_fields(trade_id: int, note: str | None, screenshot_path: str | None) -> bool:
+    """Update the journal-only fields for one trade."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        UPDATE trades
+        SET note = ?, screenshot_path = ?
+        WHERE id = ?
+        """,
+        (note, screenshot_path, trade_id),
+    )
+    updated = cursor.rowcount == 1
+    conn.commit()
+    conn.close()
+    return updated
+
+
 def _row_to_trade(row: tuple) -> Trade:
     """Convert a SQLite row into the Trade dataclass."""
     return Trade(

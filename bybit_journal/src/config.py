@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -27,14 +28,21 @@ USER_ROOT = APPDATA_ROOT / APP_NAME
 USER_CONFIG_DIR = USER_ROOT / "config"
 USER_DATA_DIR = USER_ROOT / "data"
 USER_EXPORTS_DIR = DOCUMENTS_ROOT / APP_NAME / "exports"
+USER_BACKUPS_DIR = DOCUMENTS_ROOT / APP_NAME / "backups"
 
 ENV_PATH = USER_CONFIG_DIR / ".env"
 ENV_EXAMPLE_PATH = PROJECT_ROOT / ".env.example"
+SETTINGS_PATH = USER_CONFIG_DIR / "settings.json"
 DB_PATH = USER_DATA_DIR / "journal.db"
 LOG_PATH = USER_DATA_DIR / "log"
 EXPORTS_DIR = USER_EXPORTS_DIR
+BACKUPS_DIR = USER_BACKUPS_DIR
 
 BYBIT_BASE_URL = "https://api.bybit.com"
+DEV_MODE = os.getenv(
+    "BYBIT_JOURNAL_DEV_MODE",
+    "1" if not getattr(sys, "frozen", False) else "0",
+).strip().lower() in {"1", "true", "yes", "on"}
 
 
 def _copy_if_missing(source: Path, destination: Path) -> None:
@@ -63,6 +71,7 @@ def ensure_directories() -> None:
     USER_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     USER_DATA_DIR.mkdir(parents=True, exist_ok=True)
     EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    BACKUPS_DIR.mkdir(parents=True, exist_ok=True)
     _migrate_legacy_storage()
 
 
@@ -96,3 +105,17 @@ def has_api_credentials() -> bool:
     """Return True only when both API key and secret are configured."""
     api_key, api_secret = get_api_credentials()
     return bool(api_key and api_secret)
+
+
+def get_runtime_paths() -> dict[str, str]:
+    """Return the active runtime folders used by the app."""
+    return {
+        "env_path": str(ENV_PATH),
+        "settings_path": str(SETTINGS_PATH),
+        "db_path": str(DB_PATH),
+        "log_path": str(LOG_PATH),
+        "exports_dir": str(EXPORTS_DIR),
+        "backups_dir": str(BACKUPS_DIR),
+        "config_dir": str(USER_CONFIG_DIR),
+        "data_dir": str(USER_DATA_DIR),
+    }

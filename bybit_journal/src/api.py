@@ -49,6 +49,31 @@ def _build_query_string(params: dict) -> str:
     return "&".join(parts)
 
 
+def _perform_get(url: str, headers: dict, params: dict, context: str) -> dict:
+    """Run one GET request and raise a readable desktop-friendly error on failure."""
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.Timeout as error:
+        raise RuntimeError(f"{context}: request timed out.") from error
+    except requests.HTTPError as error:
+        response = error.response
+        details = ""
+        if response is not None:
+            try:
+                payload = response.json()
+                details = payload.get("retMsg") or payload.get("message") or ""
+            except ValueError:
+                details = response.text.strip()
+        raise RuntimeError(
+            f"{context}: HTTP {response.status_code if response is not None else 'error'}"
+            + (f" - {details}" if details else "")
+        ) from error
+    except requests.RequestException as error:
+        raise RuntimeError(f"{context}: network error.") from error
+
+
 def get_wallet_balance() -> dict:
     """Fetch the unified account wallet payload."""
     endpoint = "/v5/account/wallet-balance"
@@ -61,10 +86,7 @@ def get_wallet_balance() -> dict:
 
     signature = _build_signature(timestamp, recv_window, query_string)
     headers = _build_headers(timestamp, recv_window, signature)
-
-    response = requests.get(url, headers=headers, params=params, timeout=10)
-    response.raise_for_status()
-    return response.json()
+    return _perform_get(url, headers, params, "Bybit wallet balance")
 
 
 def get_executions(
@@ -92,7 +114,4 @@ def get_executions(
 
     signature = _build_signature(timestamp, recv_window, query_string)
     headers = _build_headers(timestamp, recv_window, signature)
-
-    response = requests.get(url, headers=headers, params=params, timeout=10)
-    response.raise_for_status()
-    return response.json()
+    return _perform_get(url, headers, params, f"Bybit executions [{category}]")
