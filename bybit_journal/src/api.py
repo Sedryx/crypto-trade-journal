@@ -3,6 +3,7 @@
 import hashlib
 import hmac
 import time
+from urllib.parse import urlencode
 
 import requests
 
@@ -41,12 +42,12 @@ def _build_headers(timestamp: str, recv_window: str, signature: str) -> dict:
 
 def _build_query_string(params: dict) -> str:
     """Serialize query params exactly as expected by the signature payload."""
-    parts = []
+    filtered_params = []
     for key, value in params.items():
         if value is None:
             continue
-        parts.append(f"{key}={value}")
-    return "&".join(parts)
+        filtered_params.append((key, value))
+    return urlencode(filtered_params)
 
 
 def _perform_get(url: str, headers: dict, params: dict, context: str) -> dict:

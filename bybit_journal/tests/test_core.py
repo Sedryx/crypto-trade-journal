@@ -539,6 +539,22 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(trade.invested_amount, 16000.0)
         self.assertEqual(trade.trade_time, "2024-03-09 16:00:00")
 
+    def test_execution_to_trade_normalizes_usdc_perpetual_symbol(self) -> None:
+        execution = {
+            "execId": "perp123",
+            "symbol": "BTCPERP",
+            "feeCurrency": "USDC",
+            "side": "Buy",
+            "execQty": "0.01",
+            "execPrice": "66000",
+            "execPnl": "0",
+            "execTime": "1710000000000",
+        }
+
+        trade = sync.execution_to_trade(execution)
+
+        self.assertEqual(trade.symbol, "BTCUSDC")
+
     def test_fetch_all_executions_from_category_follows_pagination(self) -> None:
         # The second API call must reuse the cursor returned by the first page.
         first_page = {
@@ -567,6 +583,26 @@ class SyncTests(unittest.TestCase):
         self.assertEqual([item["execId"] for item in executions], ["1", "2", "3"])
         self.assertEqual(mocked.call_count, 2)
         self.assertEqual(mocked.call_args_list[1].kwargs["cursor"], "cursor-1")
+
+
+class ApiTests(unittest.TestCase):
+    """Low-level Bybit request signing helpers."""
+
+    def test_build_query_string_urlencodes_cursor_values(self) -> None:
+        from api import _build_query_string
+
+        query_string = _build_query_string(
+            {
+                "category": "linear",
+                "limit": 100,
+                "cursor": "343109%3A2%2C343109%3A2",
+            }
+        )
+
+        self.assertEqual(
+            query_string,
+            "category=linear&limit=100&cursor=343109%253A2%252C343109%253A2",
+        )
 
 
 class DesktopTests(unittest.TestCase):

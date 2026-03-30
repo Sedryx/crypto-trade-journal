@@ -599,9 +599,11 @@ def sync_bybit_trades_data(days: int = 30, now_ms: int | None = None) -> dict:
 
     per_category = []
     total_inserted = 0
+    errors = []
 
     for category in ["linear", "spot", "inverse", "option"]:
         inserted_count = 0
+        category_errors = []
         for start_ms, end_ms in sync_ranges:
             try:
                 inserted_count += sync_executions_from_category(
@@ -610,14 +612,18 @@ def sync_bybit_trades_data(days: int = 30, now_ms: int | None = None) -> dict:
                     end_time=end_ms,
                     limit=100,
                 )
-            except ValueError:
+            except ValueError as error:
+                category_errors.append(str(error))
                 # A category failure should not block the whole desktop refresh.
                 continue
         total_inserted += inserted_count
+        if category_errors:
+            errors.extend(category_errors)
         per_category.append(
             {
                 "category": category,
                 "inserted_count": inserted_count,
+                "errors": category_errors,
             }
         )
 
@@ -628,6 +634,7 @@ def sync_bybit_trades_data(days: int = 30, now_ms: int | None = None) -> dict:
         "range_count": len(sync_ranges),
         "categories": per_category,
         "total_inserted": total_inserted,
+        "errors": errors,
     }
 
 

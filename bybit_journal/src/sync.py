@@ -22,10 +22,18 @@ def execution_to_trade(execution: dict) -> Trade:
     exec_price = float(execution.get("execPrice", 0) or 0)
     exec_qty = float(execution.get("execQty", 0) or 0)
     exec_pnl = float(execution.get("execPnl", 0) or 0)
+    raw_symbol = str(execution.get("symbol", "") or "").upper()
+    fee_currency = str(execution.get("feeCurrency", "") or "").upper()
+
+    symbol = raw_symbol
+    # Bybit often returns USDC perpetual contracts as `BTCPERP`, `ETHPERP`, ...
+    # Normalize those symbols to the more explicit `BTCUSDC`, `ETHUSDC`, etc.
+    if raw_symbol.endswith("PERP") and fee_currency == "USDC":
+        symbol = f"{raw_symbol[:-4]}USDC"
 
     return Trade(
         bybit_trade_id=execution.get("execId", ""),
-        symbol=execution.get("symbol", "").upper(),
+        symbol=symbol,
         side=execution.get("side", ""),
         qty=exec_qty,
         entry_price=exec_price,
